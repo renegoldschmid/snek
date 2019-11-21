@@ -1,4 +1,4 @@
-package sample;
+package at.ac.fhcampuswien.snake;
 
 import javafx.geometry.Bounds;
 import javafx.scene.Group;

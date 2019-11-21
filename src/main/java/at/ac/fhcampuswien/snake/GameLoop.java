@@ -1,11 +1,13 @@
-package sample;
+package at.ac.fhcampuswien.snake;
 
 import javafx.animation.AnimationTimer;
 import javafx.animation.FadeTransition;
 import javafx.application.Application;
+import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.*;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
@@ -19,20 +21,20 @@ import java.io.File;
 
 public class GameLoop extends Application {
 
-    private static File splashFile = new File("src/main/resources/media/splash.mp4");
+    private static File splashFile = new File("src/main/resources/at/ac/fhcampuswien/media/splash.mp4");
     private static Media splashMedia = new Media(splashFile.toURI().toString());
     private static MediaPlayer splashPlayer = new MediaPlayer(splashMedia);
     private static MediaView splashView = new MediaView(splashPlayer);
-    private static File ingamemusicFile = new File("src/main/resources/media/sound/music/ingame2.mp3");
+    private static File ingamemusicFile = new File("src/main/resources/at/ac/fhcampuswien/media/sound/music/ingame2.mp3");
     private static Media ingamemusicMedia = new Media(ingamemusicFile.toURI().toString());
     private static MediaPlayer ingamemusicPlayer = new MediaPlayer(ingamemusicMedia);
-    private static File gameovermusicFile = new File("src/main/resources/media/sound/music/gameover1.mp3");
+    private static File gameovermusicFile = new File("src/main/resources/at/ac/fhcampuswien/media/sound/music/gameover1.mp3");
     private static Media gameovermusicMedia = new Media(gameovermusicFile.toURI().toString());
     private static MediaPlayer gameovermusicPlayer = new MediaPlayer(gameovermusicMedia);
-    private static File eatsoundFile = new File("src/main/resources/media/sound/eat2.mp3");
+    private static File eatsoundFile = new File("src/main/resources/at/ac/fhcampuswien/media/sound/eat2.mp3");
     private static Media eatsoundMedia = new Media(eatsoundFile.toURI().toString());
     private static MediaPlayer eatsoundPlayer = new MediaPlayer(eatsoundMedia);
-    private static File deathsoundFile = new File("src/main/resources/media/sound/death1.mp3");
+    private static File deathsoundFile = new File("src/main/resources/at/ac/fhcampuswien/media/sound/death1.mp3");
     private static Media deathsoundMedia = new Media(deathsoundFile.toURI().toString());
     private static MediaPlayer deathsoundPlayer = new MediaPlayer(deathsoundMedia);
     private Group root = new Group();
@@ -80,8 +82,8 @@ public class GameLoop extends Application {
 
 
     @Override
-    public void start(final Stage primaryStage) {
-        final AnimationTimer timer;
+    public void start(Stage primaryStage) throws Exception {
+        AnimationTimer timer;
 
         primaryStage.setWidth(1500);
         primaryStage.setHeight(700);
@@ -90,7 +92,7 @@ public class GameLoop extends Application {
         primaryStage.setMinWidth(50);
 
         //TODO NEU - Background stuff
-        imgSource = new Image("media/grassTile.png");
+        imgSource = new Image("file:src/main/resources/at/ac/fhcampuswien/media/grassTile.png");
         backgroundImage = new BackgroundImage(imgSource, BackgroundRepeat.REPEAT, BackgroundRepeat.REPEAT,
                 BackgroundPosition.DEFAULT, BackgroundSize.DEFAULT);
         backgroundView = new Background(backgroundImage);
@@ -98,21 +100,21 @@ public class GameLoop extends Application {
         //TODO END Background
 
 
-        final int offset = 21; //TODO Variable Namen anpassen
-        final Gameboard gameboard = new Gameboard(); // TODO NEW
-        final Control control = new Control();
-        final Snake snake = new Snake(root, primaryStage); //erstellt neues Snake Listen Objekt und getChilded es
-        final GameObject food = new GameObject();
-        final Score score = new Score(root);
+        int offset = 21; //TODO Variable Namen anpassen
+        Gameboard gameboard = new Gameboard(); // TODO NEW
+        Control control = new Control();
+        Snake snake = new Snake(root, primaryStage); //erstellt neues Snake Listen Objekt und getChilded es
+        GameObject food = new GameObject();
+        Score score = new Score(root);
         food.setFood(root, primaryStage);//setzt ein neues Food random ab
-        final Scene scene = new Scene(backgroundPane, primaryStage.getWidth(), primaryStage.getHeight(), Color.DARKGREEN);
+        Scene scene = new Scene(backgroundPane, primaryStage.getWidth(), primaryStage.getHeight(), Color.DARKGREEN);
         backgroundPane.getChildren().add(root); //TODO NEU Background - root (Group) zu backgroundPane als Child added
 
         Rectangle blackrect = new Rectangle();  //Schwarzer Block der für eine Szenentransition missbraucht wird
         blackrect.setFill(Color.BLACK);
         blackrect.setHeight(primaryStage.getHeight());
         blackrect.setWidth(primaryStage.getWidth());
-        final FadeTransition fadeblacktotransparent = new FadeTransition(Duration.millis(700), blackrect);
+        FadeTransition fadeblacktotransparent = new FadeTransition(Duration.millis(700), blackrect);
         fadeblacktotransparent.setFromValue(1.0);
         fadeblacktotransparent.setToValue(0.0);
         root.getChildren().add(blackrect);
@@ -137,10 +139,12 @@ public class GameLoop extends Application {
             }
         });
         */
-        //Keyeventhandler fragt ab obs ein Keyevent gibt
-        scene.setOnKeyPressed(keyEvent -> {
-            control.keyHandler(keyEvent, snake, root, food, score, primaryStage);//control nimmt Keyevent und schaut speziell nach WASD
+        scene.setOnKeyPressed(new EventHandler<KeyEvent>() {//Keyeventhandler fragt ab obs ein Keyevent gibt
+            @Override
+            public void handle(KeyEvent keyEvent) {
+                control.keyHandler(keyEvent, snake, root, food, score, primaryStage);//control nimmt Keyevent und schaut speziell nach WASD
 
+            }
         });
 
 
