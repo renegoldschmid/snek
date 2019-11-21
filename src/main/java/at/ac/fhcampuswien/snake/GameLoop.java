@@ -9,12 +9,12 @@ import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.*;
+import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
-import javafx.scene.media.Media;
 import javafx.util.Duration;
 
 import java.io.File;
@@ -93,7 +93,7 @@ public class GameLoop extends Application {
 
         //TODO NEU - Background stuff
         imgSource = new Image("file:src/main/resources/at/ac/fhcampuswien/media/grassTile.png");
-        backgroundImage = new BackgroundImage(imgSource, BackgroundRepeat.REPEAT.REPEAT, BackgroundRepeat.REPEAT.REPEAT,
+        backgroundImage = new BackgroundImage(imgSource, BackgroundRepeat.REPEAT, BackgroundRepeat.REPEAT,
                 BackgroundPosition.DEFAULT, BackgroundSize.DEFAULT);
         backgroundView = new Background(backgroundImage);
         backgroundPane.setBackground(backgroundView);
@@ -169,14 +169,11 @@ public class GameLoop extends Application {
                 }
             }
         };
-        splashPlayer.setOnEndOfMedia(new Runnable() {
-            @Override
-            public void run() {
-                primaryStage.setScene(scene);
-                fadeblacktotransparent.play();
-                timer.start(); //Animationtimer startet nun erst nach dem Fade out des Hundevideos
-                restartIngamemusic();
-            }
+        splashPlayer.setOnEndOfMedia(() -> {
+            primaryStage.setScene(scene);
+            fadeblacktotransparent.play();
+            timer.start(); //Animationtimer startet nun erst nach dem Fade out des Hundevideos
+            restartIngamemusic();
         });
 
     }
