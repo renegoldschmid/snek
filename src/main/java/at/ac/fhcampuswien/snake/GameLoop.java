@@ -21,55 +21,55 @@ import java.io.File;
 
 public class GameLoop extends Application {
 
-    static File splashFile = new File("src/main/resources/at/ac/fhcampuswien/media/splash.mp4");
-    static Media splashMedia = new Media(splashFile.toURI().toString());
-    static MediaPlayer splashPlayer = new MediaPlayer(splashMedia);
-    static MediaView splashView = new MediaView(splashPlayer);
-    static File ingamemusicFile = new File("src/main/resources/at/ac/fhcampuswien/media/sound/music/ingame2.mp3");
-    static Media ingamemusicMedia = new Media(ingamemusicFile.toURI().toString());
-    static MediaPlayer ingamemusicPlayer = new MediaPlayer(ingamemusicMedia);
-    static File gameovermusicFile = new File("src/main/resources/at/ac/fhcampuswien/media/sound/music/gameover1.mp3");
-    static Media gameovermusicMedia = new Media(gameovermusicFile.toURI().toString());
-    static MediaPlayer gameovermusicPlayer = new MediaPlayer(gameovermusicMedia);
-    static File eatsoundFile = new File("src/main/resources/at/ac/fhcampuswien/media/sound/eat2.mp3");
-    static Media eatsoundMedia = new Media(eatsoundFile.toURI().toString());
-    static MediaPlayer eatsoundPlayer = new MediaPlayer(eatsoundMedia);
-    static File deathsoundFile = new File("src/main/resources/at/ac/fhcampuswien/media/sound/death1.mp3");
-    static Media deathsoundMedia = new Media(deathsoundFile.toURI().toString());
-    static MediaPlayer deathsoundPlayer = new MediaPlayer(deathsoundMedia);
-    Group root = new Group();
-    Pane backgroundPane = new Pane(); //TODO NEU für Background
-    Group splashscreen = new Group();
+    private static File splashFile = new File("src/main/resources/at/ac/fhcampuswien/media/splash.mp4");
+    private static Media splashMedia = new Media(splashFile.toURI().toString());
+    private static MediaPlayer splashPlayer = new MediaPlayer(splashMedia);
+    private static MediaView splashView = new MediaView(splashPlayer);
+    private static File ingamemusicFile = new File("src/main/resources/at/ac/fhcampuswien/media/sound/music/ingame2.mp3");
+    private static Media ingamemusicMedia = new Media(ingamemusicFile.toURI().toString());
+    private static MediaPlayer ingamemusicPlayer = new MediaPlayer(ingamemusicMedia);
+    private static File gameovermusicFile = new File("src/main/resources/at/ac/fhcampuswien/media/sound/music/gameover1.mp3");
+    private static Media gameovermusicMedia = new Media(gameovermusicFile.toURI().toString());
+    private static MediaPlayer gameovermusicPlayer = new MediaPlayer(gameovermusicMedia);
+    private static File eatsoundFile = new File("src/main/resources/at/ac/fhcampuswien/media/sound/eat2.mp3");
+    private static Media eatsoundMedia = new Media(eatsoundFile.toURI().toString());
+    private static MediaPlayer eatsoundPlayer = new MediaPlayer(eatsoundMedia);
+    private static File deathsoundFile = new File("src/main/resources/at/ac/fhcampuswien/media/sound/death1.mp3");
+    private static Media deathsoundMedia = new Media(deathsoundFile.toURI().toString());
+    private static MediaPlayer deathsoundPlayer = new MediaPlayer(deathsoundMedia);
+    private Group root = new Group();
+    private Pane backgroundPane = new Pane(); //TODO NEU für Background
+    private Group splashscreen = new Group();
     //TODO NEU - Background stuff
-    Image imgSource;
-    BackgroundImage backgroundImage;
-    Background backgroundView;
+    private Image imgSource;
+    private BackgroundImage backgroundImage;
+    private Background backgroundView;
     private long lastUpdate = 0; //für Geschwindigkeitssteuerung
 
-    public static void restartIngamemusic() { //Startet Ingame Musik von vorne
+    static void restartIngamemusic() { //Startet Ingame Musik von vorne
         ingamemusicPlayer.seek(Duration.ZERO);
         ingamemusicPlayer.play();
     }
 
-    public static void stopIngamemusic() {
+    static void stopIngamemusic() {
         ingamemusicPlayer.stop();
     }
 
-    public static void restartGameovermusic() {
+    static void restartGameovermusic() {
         gameovermusicPlayer.seek(Duration.ZERO);
         gameovermusicPlayer.play();
     }
 
-    public static void stopGameovermusic() {
+    static void stopGameovermusic() {
         gameovermusicPlayer.stop();
     }
 
-    public static void playEatsound() {
+    static void playEatsound() {
         eatsoundPlayer.seek(Duration.ZERO);
         eatsoundPlayer.play();
     }
 
-    public static void playDeathsound() {
+    static void playDeathsound() {
         deathsoundPlayer.seek(Duration.ZERO);
         deathsoundPlayer.play();
     }
