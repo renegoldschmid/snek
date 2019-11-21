@@ -1,4 +1,4 @@
-package sample;
+package at.ac.fhcampuswien.snake;
 
 import javafx.scene.Group;
 import javafx.scene.control.Label;
