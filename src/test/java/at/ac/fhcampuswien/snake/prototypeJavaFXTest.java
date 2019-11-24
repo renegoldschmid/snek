@@ -51,7 +51,6 @@ class prototypeJavaFXTest {
     void when_button_is_clicked_text_changes(FxRobot robot) {
         // when:
         robot.clickOn(".button");
-
         // then:
         FxAssert.verifyThat(button, LabeledMatchers.hasText("clicked!"));
         // or (lookup by css id):

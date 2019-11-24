@@ -43,6 +43,7 @@ public class GameLoop extends Application {
     private BackgroundImage backgroundImage;
     private Background backgroundView;
     private long lastUpdate = 0; //für Geschwindigkeitssteuerung
+    private Scene mainGameScene;
 
     static void restartIngamemusic() { //Startet Ingame Musik von vorne
         ingamemusicPlayer.seek(Duration.ZERO);
@@ -78,9 +79,9 @@ public class GameLoop extends Application {
 
     }
 
-
     @Override
     public void start(Stage primaryStage) {
+        mainGameScene = primaryStage.getScene();
         AnimationTimer timer;
 
         primaryStage.setWidth(1500);
@@ -175,4 +176,7 @@ public class GameLoop extends Application {
     }
 
 
+    public Scene getMainGameScene() {
+        return this.mainGameScene;
+    }
 }
