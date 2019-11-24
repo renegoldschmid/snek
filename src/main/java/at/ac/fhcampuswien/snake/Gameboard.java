@@ -10,10 +10,10 @@ import javafx.stage.Stage;
 import java.util.Random;
 
 //Labels
-public class Gameboard {
-    String[] touchWall = new String[9];
-    String[] touchTail = new String[6];
-    Random rand = new Random();
+class Gameboard {
+    private final String[] touchWall = new String[9];
+    private final String[] touchTail = new String[6];
+    private final Random rand = new Random();
 
 
     private String[] stringsTouchWall() {
@@ -40,7 +40,7 @@ public class Gameboard {
     }
 
 
-    public void setDeathTouchWall(Score score, Group group, Stage stage) {
+    void setDeathTouchWall(Score score, Group group, Stage stage) {
         Label deathTouchWall = new Label(stringsTouchWall()[rand.nextInt(9)]
                 + "\nPress R for respawn" + "\nScore: " + score.getScore());
         deathTouchWall.setFont(new Font("Calibri",80));
@@ -52,7 +52,7 @@ public class Gameboard {
 
     }
 
-    public void setDeathTouchTail(Score score, Group group, Stage stage) {
+    void setDeathTouchTail(Score score, Group group, Stage stage) {
         Label deathTouchTail = new Label(stringsTouchTail()[rand.nextInt(6)] + "\nPress R for respawn"
                 +"\nScore: " + score.getScore());
         deathTouchTail.setFont(new Font("Calibri",80));
