@@ -9,12 +9,8 @@ class GameMessage {
         this.messageType = messageType;
     }
 
-    public String getMessageType() {
+    String getMessageType() {
         return messageType;
-    }
-
-    public String getMessageDescription() {
-        return messageDescription;
     }
 
     @Override

@@ -11,8 +11,14 @@ class MessageFactory {
     }
 
     GameMessage getRandomGameMessageOfType(String messageType) {
+        ArrayList<GameMessage> gameMessagesOfRequestedType = new ArrayList<>();
+        for (GameMessage gameMessage : gameMessagesList) {
+            if (gameMessage.getMessageType().equals(messageType)) {
+                gameMessagesOfRequestedType.add(gameMessage);
+            }
+        }
         Random rand = new Random();
-        return gameMessagesList.get(rand.nextInt(gameMessagesList.size()));
+        return gameMessagesOfRequestedType.get(rand.nextInt(gameMessagesOfRequestedType.size()));
     }
 
 

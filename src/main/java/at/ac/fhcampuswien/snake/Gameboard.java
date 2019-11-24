@@ -7,13 +7,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
-import java.util.Random;
-
 //Labels
 class Gameboard {
-    private final String[] touchWall = new String[9];
-    private final String[] touchTail = new String[6];
-    private final Random rand = new Random();
     private final MessageFactory gameMessages = new MessageFactory();
 
     Gameboard() {
