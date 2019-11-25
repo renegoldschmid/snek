@@ -10,7 +10,7 @@ import java.util.Random;
 
 
 public class GameObject {
-    public Rectangle food = new Rectangle(20, 20); //public um X/Y Koordinaten zu bekommen
+    public Rectangle food = new Rectangle(GameConstants.FOOD_WIDTH, GameConstants.FOOD_HEIGHT); //public um X/Y Koordinaten zu bekommen
     private Random rand;
     private double redPart, greenPart, bluePart;
     private Bounds fbound;
@@ -34,7 +34,7 @@ public class GameObject {
         rand = new Random();
 
         food.setFill(Color.color(redPart = rand.nextDouble(), greenPart = rand.nextDouble(), bluePart = rand.nextDouble())); // hier werden zufällige Farben für das Food (und damit auch den Tail) übergeben
-        food.relocate(rand.nextInt((int) stage.getWidth() - 50), rand.nextInt((int) stage.getHeight() - 50)); // Random Location mit Abstand vom Rand jeweils 40
+        food.relocate(rand.nextInt((int) stage.getWidth() - GameConstants.FOOD_BORDER_OFFSET), rand.nextInt((int) stage.getHeight() - GameConstants.FOOD_BORDER_OFFSET)); // Random Location mit Abstand vom Rand jeweils 40
         g.getChildren().add(food);
         fbound = food.getBoundsInParent();
 
@@ -43,6 +43,4 @@ public class GameObject {
     public Bounds getBound() {
         return fbound;
     }
-
-
 }
