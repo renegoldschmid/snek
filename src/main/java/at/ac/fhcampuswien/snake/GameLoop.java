@@ -3,11 +3,9 @@ package at.ac.fhcampuswien.snake;
 import javafx.animation.AnimationTimer;
 import javafx.animation.FadeTransition;
 import javafx.application.Application;
-import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.*;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
@@ -21,30 +19,31 @@ import java.io.File;
 
 public class GameLoop extends Application {
 
-    private static File splashFile = new File("src/main/resources/at/ac/fhcampuswien/media/splash.mp4");
-    private static Media splashMedia = new Media(splashFile.toURI().toString());
-    private static MediaPlayer splashPlayer = new MediaPlayer(splashMedia);
-    private static MediaView splashView = new MediaView(splashPlayer);
-    private static File ingamemusicFile = new File("src/main/resources/at/ac/fhcampuswien/media/sound/music/ingame2.mp3");
-    private static Media ingamemusicMedia = new Media(ingamemusicFile.toURI().toString());
-    private static MediaPlayer ingamemusicPlayer = new MediaPlayer(ingamemusicMedia);
-    private static File gameovermusicFile = new File("src/main/resources/at/ac/fhcampuswien/media/sound/music/gameover1.mp3");
-    private static Media gameovermusicMedia = new Media(gameovermusicFile.toURI().toString());
-    private static MediaPlayer gameovermusicPlayer = new MediaPlayer(gameovermusicMedia);
-    private static File eatsoundFile = new File("src/main/resources/at/ac/fhcampuswien/media/sound/eat2.mp3");
-    private static Media eatsoundMedia = new Media(eatsoundFile.toURI().toString());
-    private static MediaPlayer eatsoundPlayer = new MediaPlayer(eatsoundMedia);
-    private static File deathsoundFile = new File("src/main/resources/at/ac/fhcampuswien/media/sound/death1.mp3");
-    private static Media deathsoundMedia = new Media(deathsoundFile.toURI().toString());
-    private static MediaPlayer deathsoundPlayer = new MediaPlayer(deathsoundMedia);
-    private Group root = new Group();
-    private Pane backgroundPane = new Pane(); //TODO NEU für Background
-    private Group splashscreen = new Group();
+    private static final File splashFile = new File("src/main/resources/at/ac/fhcampuswien/media/splash.mp4");
+    private static final Media splashMedia = new Media(splashFile.toURI().toString());
+    private static final MediaPlayer splashPlayer = new MediaPlayer(splashMedia);
+    private static final MediaView splashView = new MediaView(splashPlayer);
+    private static final File ingamemusicFile = new File("src/main/resources/at/ac/fhcampuswien/media/sound/music/ingame2.mp3");
+    private static final Media ingamemusicMedia = new Media(ingamemusicFile.toURI().toString());
+    private static final MediaPlayer ingamemusicPlayer = new MediaPlayer(ingamemusicMedia);
+    private static final File gameovermusicFile = new File("src/main/resources/at/ac/fhcampuswien/media/sound/music/gameover1.mp3");
+    private static final Media gameovermusicMedia = new Media(gameovermusicFile.toURI().toString());
+    private static final MediaPlayer gameovermusicPlayer = new MediaPlayer(gameovermusicMedia);
+    private static final File eatsoundFile = new File("src/main/resources/at/ac/fhcampuswien/media/sound/eat2.mp3");
+    private static final Media eatsoundMedia = new Media(eatsoundFile.toURI().toString());
+    private static final MediaPlayer eatsoundPlayer = new MediaPlayer(eatsoundMedia);
+    private static final File deathsoundFile = new File("src/main/resources/at/ac/fhcampuswien/media/sound/death1.mp3");
+    private static final Media deathsoundMedia = new Media(deathsoundFile.toURI().toString());
+    private static final MediaPlayer deathsoundPlayer = new MediaPlayer(deathsoundMedia);
+    private final Group root = new Group();
+    private final Pane backgroundPane = new Pane(); //TODO NEU für Background
+    private final Group splashscreen = new Group();
     //TODO NEU - Background stuff
     private Image imgSource;
     private BackgroundImage backgroundImage;
     private Background backgroundView;
     private long lastUpdate = 0; //für Geschwindigkeitssteuerung
+    private Scene mainGameScene;
 
     static void restartIngamemusic() { //Startet Ingame Musik von vorne
         ingamemusicPlayer.seek(Duration.ZERO);
@@ -80,9 +79,9 @@ public class GameLoop extends Application {
 
     }
 
-
     @Override
-    public void start(Stage primaryStage) throws Exception {
+    public void start(Stage primaryStage) {
+        mainGameScene = primaryStage.getScene();
         AnimationTimer timer;
 
         primaryStage.setWidth(1500);
@@ -139,12 +138,10 @@ public class GameLoop extends Application {
             }
         });
         */
-        scene.setOnKeyPressed(new EventHandler<KeyEvent>() {//Keyeventhandler fragt ab obs ein Keyevent gibt
-            @Override
-            public void handle(KeyEvent keyEvent) {
-                control.keyHandler(keyEvent, snake, root, food, score, primaryStage);//control nimmt Keyevent und schaut speziell nach WASD
+        //Keyeventhandler fragt ab obs ein Keyevent gibt
+        scene.setOnKeyPressed(keyEvent -> {
+            control.keyHandler(keyEvent, snake, root, food, score, primaryStage);//control nimmt Keyevent und schaut speziell nach WASD
 
-            }
         });
 
 
@@ -162,7 +159,7 @@ public class GameLoop extends Application {
                     else if (control.getgoDown()) dy += offset;
                     else if (control.getgoRight()) dx += offset;
                     else if (control.getgoLeft()) dx += -offset;
-                    snake.moveSnake(dx, dy, primaryStage);
+                    snake.moveSnake(dx, dy);
 
                     lastUpdate = now;
 
@@ -179,4 +176,7 @@ public class GameLoop extends Application {
     }
 
 
+    public Scene getMainGameScene() {
+        return this.mainGameScene;
+    }
 }
