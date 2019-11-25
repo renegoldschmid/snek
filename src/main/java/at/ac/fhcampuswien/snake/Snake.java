@@ -10,10 +10,10 @@ import java.util.LinkedList;
 
 public class Snake {
 
-    public long frameDelay = 25000000; //25-30 mill. guter Startwert
-    public long delayDecrease = 600000;  //von speedRefresh abziehen
+    public long frameDelay = GameConstants.FRAMEDELAY; //25-30 mill. guter Startwert
+    public long delayDecrease = GameConstants.DELAY_DECREASE;  //von speedRefresh abziehen
     //GameObject food = new GameObject();
-    private Rectangle head = new Rectangle(20, 20); // hier Initialisiert, weil in mehreren Methoden
+    private Rectangle head = new Rectangle(GameConstants.SNAKE_WIDTH, GameConstants.SNAKE_HEIGHT); // hier Initialisiert, weil in mehreren Methoden
     private LinkedList<Rectangle> snake = new LinkedList<>();
 
     public Snake(Group group, Stage stage) {
@@ -37,7 +37,7 @@ public class Snake {
         group.getChildren().add(snake.getFirst());
         food.setFood(group, stage); // setet neues random food und getchilded es
         score.scoreRespawn(group); // respawn Mehtode für Score
-        frameDelay = 25000000; // zurück zum Standardwert
+        frameDelay = GameConstants.FRAMEDELAY; // zurück zum Standardwert
 
         control.stopMovement();
 
@@ -50,18 +50,18 @@ public class Snake {
         snake.clear();
         snake.add(head);
         snake.getFirst().relocate(stage.getWidth() / 2, stage.getHeight() / 2);
-        frameDelay = 25000000; // zurück zum Standardwert
+        frameDelay = GameConstants.FRAMEDELAY; // zurück zum Standardwert
         control.stopMovement();
 
     }
 
 
     public void eat(Group group, Score score, GameObject food) {//added ein tail rectangle, übernimmt color von food,erhöht score um 1, macht schneller
-        snake.add(new Rectangle(20, 20));
+        snake.add(new Rectangle(GameConstants.SNAKE_WIDTH, GameConstants.SNAKE_HEIGHT));
         snake.getLast().setFill(Color.color(food.getColor()[0], food.getColor()[1], food.getColor()[2])); //holt sich aus deathsoundMedia GameObject die Color von Food für sein Tail
         group.getChildren().add(snake.getLast()); //bringt den tail auf die Szene
         score.upScoreValue(); // added +1 zu scoreValue
-        if (frameDelay >= 8000000) { //maximale Grenze sonst wirds zu schnell
+        if (frameDelay >= GameConstants.FRAMEDELAY_MAX) { //maximale Grenze sonst wirds zu schnell
             frameDelay -= delayDecrease;
             System.out.println(frameDelay);
         }

@@ -86,11 +86,11 @@ public class GameLoop extends Application {
     public void start(Stage primaryStage) throws Exception {
         AnimationTimer timer;
 
-        primaryStage.setWidth(1500);
-        primaryStage.setHeight(700);
-
-        primaryStage.setMinHeight(50);
-        primaryStage.setMinWidth(50);
+        primaryStage.setWidth(GameConstants.STAGE_WIDTH);
+        primaryStage.setHeight(GameConstants.STAGE_HEIGHT);
+        
+        primaryStage.setMinWidth(GameConstants.STAGE_MIN_WIDTH);
+        primaryStage.setMinHeight(GameConstants.STAGE_MIN_HEIGHT);
 
         //TODO NEU - Background stuff
         imgSource = new Image("file:src/main/resources/at/ac/fhcampuswien/media/grassTile.png");
@@ -101,7 +101,7 @@ public class GameLoop extends Application {
         //TODO END Background
 
 
-        int offset = 21; //TODO Variable Namen anpassen
+        int offset = GameConstants.SPEED; //TODO Variable Namen anpassen
         Gameboard gameboard = new Gameboard(); // TODO NEW
         Control control = new Control();
         Snake snake = new Snake(root, primaryStage); //erstellt neues Snake Listen Objekt und getChilded es

@@ -5,7 +5,7 @@ import javafx.scene.control.Label;
 import javafx.scene.text.Font;
 
 public class Score {
-    private int scoreValue = 0;
+    private int scoreValue = GameConstants.INIT_SCORE;
     Label score = new Label("Score: " + scoreValue);
 
     public Score(Group group) {
@@ -16,7 +16,7 @@ public class Score {
     }
 
     public void scoreRespawn(Group group) {
-        scoreValue = 0;
+        scoreValue = GameConstants.INIT_SCORE;
         score.setFont(new Font("Arial", 50));
         score.setText("Score: " + scoreValue);
         group.getChildren().add(score);
