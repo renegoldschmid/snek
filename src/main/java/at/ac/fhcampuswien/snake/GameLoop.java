@@ -17,6 +17,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
+import java.awt.Point;
 import java.io.File;
 
 public class GameLoop extends Application {
@@ -148,27 +149,7 @@ public class GameLoop extends Application {
         });
 
 
-        timer = new AnimationTimer() {
-            @Override
-            public void handle(long now) {
-
-                if (now - lastUpdate >= snake.getframeDelay()) {
-
-                    int dx = 0, dy = 0;
-
-                    snake.collision(food, root, food.getBound(), score, control, primaryStage, gameboard);
-
-                    if (control.getgoUp()) dy += -offset; //offset="speed"
-                    else if (control.getgoDown()) dy += offset;
-                    else if (control.getgoRight()) dx += offset;
-                    else if (control.getgoLeft()) dx += -offset;
-                    snake.moveSnake(dx, dy, primaryStage);
-
-                    lastUpdate = now;
-
-                }
-            }
-        };
+        timer = createTimer(primaryStage, offset, gameboard, control, snake, food, score);
         splashPlayer.setOnEndOfMedia(() -> {
             primaryStage.setScene(scene);
             fadeblacktotransparent.play();
@@ -177,6 +158,41 @@ public class GameLoop extends Application {
         });
 
     }
+    
+    
+	private AnimationTimer createTimer(Stage primaryStage, int offset, Gameboard gameboard, Control control, Snake snake,
+			GameObject food, Score score) {
+		
+		AnimationTimer timer;
+		timer = new AnimationTimer() {
+            @Override
+            public void handle(long now) {
 
+                if (now - lastUpdate >= snake.getframeDelay()) {
+
+                    Point direction = new Point(0,0);
+
+                    snake.collision(food, root, food.getBound(), score, control, primaryStage, gameboard);
+
+                    if (control.getgoUp()) {
+                    	direction.y += -offset; //offset="speed"
+                    }
+                    else if (control.getgoDown()) {
+                    	direction.y += offset;
+                    }
+                    else if (control.getgoRight()) {
+                    	direction.x += offset;
+                    }
+                    else if (control.getgoLeft()) {
+                    	direction.x += -offset;
+                    }
+                    
+                    snake.moveSnake(direction.x, direction.y, primaryStage);
+                    lastUpdate = now;
+                }
+            }
+        };
+		return timer;
+	}
 
 }
