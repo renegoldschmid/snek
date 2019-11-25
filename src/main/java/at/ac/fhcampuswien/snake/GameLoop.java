@@ -43,7 +43,7 @@ public class GameLoop extends Application {
 
 
     @Override
-    public void start(Stage primaryStage) throws Exception {
+    public void start(Stage primaryStage) {
         AnimationTimer timer;
 
         primaryStage.setWidth(GameConstants.STAGE_WIDTH);
@@ -74,12 +74,10 @@ public class GameLoop extends Application {
         FadeTransition fadeBlackToTransparent = sceneTransition(primaryStage);
         createIntro(primaryStage);
 
-        scene.setOnKeyPressed(new EventHandler<KeyEvent>() {//Keyeventhandler fragt ab obs ein Keyevent gibt
-            @Override
-            public void handle(KeyEvent keyEvent) {
-                control.keyHandler(keyEvent, snake, root, food, score, primaryStage);//control nimmt Keyevent und schaut speziell nach WASD
+        //Keyeventhandler fragt ab obs ein Keyevent gibt
+        scene.setOnKeyPressed(keyEvent -> {
+            control.keyHandler(keyEvent, snake, root, food, score, primaryStage);//control nimmt Keyevent und schaut speziell nach WASD
 
-            }
         });
 
         timer = createTimer(primaryStage, offset, gameboard, control, snake, food, score);
