@@ -72,8 +72,8 @@ public class Control {
                 break;
             case R:
                 snake.respawn(group, food, score, stage, this);
-                GameLoop.stopGameovermusic();
-                GameLoop.restartIngamemusic();
+                AudioManager.stopGameovermusic();
+                AudioManager.restartIngamemusic();
                 break;
 
 
