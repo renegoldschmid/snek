@@ -9,12 +9,12 @@ import javafx.stage.Stage;
 import java.awt.Point;
 import java.util.LinkedList;
 
-public class Snake {
+class Snake {
 
     public long frameDelay = GameConstants.FRAMEDELAY; //25-30 mill. guter Startwert
     public long delayDecrease = GameConstants.DELAY_DECREASE;  //von speedRefresh abziehen
-    private Rectangle head = new Rectangle(GameConstants.SNAKE_WIDTH, GameConstants.SNAKE_HEIGHT); // hier Initialisiert, weil in mehreren Methoden
     private LinkedList<Rectangle> snake = new LinkedList<>();
+    private Rectangle head = new Rectangle(GameConstants.SNAKE_WIDTH, GameConstants.SNAKE_HEIGHT); // hier Initialisiert, weil in mehreren Methoden
 
     public Snake(Group group, Stage stage) {
         resetSnake(stage);
@@ -27,11 +27,11 @@ public class Snake {
     	snake.getFirst().relocate(stage.getWidth() / 2, stage.getHeight() / 2);
     }
 
-    public long getframeDelay() {
+    long getframeDelay() {
         return frameDelay;
     }
 
-    public void respawn(Group group, GameObject food, Score score, Stage stage, Control control) {
+    void respawn(Group group, GameObject food, Score score, Stage stage, Control control) {
         group.getChildren().clear();
         resetSnake(stage);
         group.getChildren().add(snake.getFirst());
@@ -42,7 +42,7 @@ public class Snake {
         control.stopMovement();
     }
 
-    public void snakeDead(Group group, GameObject food, Score score, Control control, Stage stage) {
+    private void snakeDead(Group group, Control control, Stage stage) {
         //Last Minute - wird gebraucht um Score nicht zu früh zu löschen (überlegung nur respawn zu verwenden mit dieser implementierung fehlgeschlagen)
         group.getChildren().clear();
         resetSnake(stage);
@@ -51,8 +51,8 @@ public class Snake {
     }
 
 
-    public void eat(Group group, Score score, GameObject food) {//added ein tail rectangle, übernimmt color von food,erhöht score um 1, macht schneller
         snake.add(new Rectangle(GameConstants.SNAKE_WIDTH, GameConstants.SNAKE_HEIGHT));
+    private void eat(Group group, Score score, GameObject food) {//added ein tail rectangle, übernimmt color von food,erhöht score um 1, macht schneller
         snake.getLast().setFill(Color.color(food.getColor()[0], food.getColor()[1], food.getColor()[2])); //holt sich aus deathsoundMedia GameObject die Color von Food für sein Tail
         group.getChildren().add(snake.getLast()); //bringt den tail auf die Szene
         score.upScoreValue(); // added +1 zu scoreValue
@@ -62,7 +62,7 @@ public class Snake {
         }
     }
 
-    public void collision(GameObject food, Group group, Bounds foodBound, Score score, Control control, Stage stage, Gameboard gameboard) { //gameobject sind obstacles so wie Food, Boundarys für Collisions
+    void collision(GameObject food, Group group, Bounds foodBound, Score score, Control control, Stage stage, Gameboard gameboard) { //gameobject sind obstacles so wie Food, Boundarys für Collisions
         Bounds headBox = head.getBoundsInParent(); // erstellt eine Boundary um den Snakekopf
 
 
@@ -74,7 +74,7 @@ public class Snake {
 
         if (head.getLayoutX() <= 0 || head.getLayoutX() >= stage.getWidth() - 30 || // Überprüfung ob Head den Rand trifft
                 head.getLayoutY() <= 0 || head.getLayoutY() >= stage.getHeight() - 54) {
-            snakeDead(group, food, score, control, stage);
+            snakeDead(group, control, stage);
             gameboard.setDeathTouchWall(score, group, stage);
             AudioManager.playDeathsound();
             AudioManager.stopIngamemusic();
@@ -85,7 +85,7 @@ public class Snake {
         for (int i = 1; i < this.snake.size(); i++) { //Überprüfung Snake beisst sich in den oasch
             if (headBox.intersects(this.snake.get(i).getBoundsInParent())) {
                 System.out.println("DEAD");
-                snakeDead(group, food, score, control, stage);
+                snakeDead(group, control, stage);
                 gameboard.setDeathTouchTail(score, group, stage);
                 AudioManager.playDeathsound();
                 AudioManager.stopIngamemusic();
@@ -94,9 +94,9 @@ public class Snake {
         }
     }
 
-    public void moveSnake(Point direction, Stage stage) { //dx bzw dy ist jeweils + oder - speed, war zuvor 5
-    	
         if (direction.x != 0 || direction.y != 0) { //gibt es überhaupt dx/dy werte (wenn wir stehen z.B. nicht)
+    	
+    public void moveSnake(Point direction, Stage stage) { //dx bzw dy ist jeweils + oder - speed, war zuvor 5
             LinkedList<Rectangle> snakehelp = new LinkedList<>();
 
             for (int i = 0; i < snake.size(); i++) {

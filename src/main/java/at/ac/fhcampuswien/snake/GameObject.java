@@ -19,7 +19,7 @@ public class GameObject {
 
     }
 
-    public double[] getColor() { // returned ein double Array mit den Farben für den Schwanz der Schlange, wird nacher von eat aufgerufen
+    double[] getColor() { // returned ein double Array mit den Farben für den Schwanz der Schlange, wird nacher von eat aufgerufen
         double[] colors = new double[3];
         colors[0] = redPart;
         colors[1] = greenPart;
@@ -29,9 +29,9 @@ public class GameObject {
     }
 
 
-    public void setFood(Group g, Stage stage) {
+    void setFood(Group g, Stage stage) {
         g.getChildren().remove(food);//um vorheriges Food verschwinden zu lassen
-        rand = new Random();
+        Random rand = new Random();
 
         food.setFill(Color.color(redPart = rand.nextDouble(), greenPart = rand.nextDouble(), bluePart = rand.nextDouble())); // hier werden zufällige Farben für das Food (und damit auch den Tail) übergeben
         food.relocate(rand.nextInt((int) stage.getWidth() - GameConstants.FOOD_BORDER_OFFSET), rand.nextInt((int) stage.getHeight() - GameConstants.FOOD_BORDER_OFFSET)); // Random Location mit Abstand vom Rand jeweils 40
@@ -40,7 +40,7 @@ public class GameObject {
 
     }
 
-    public Bounds getBound() {
+    Bounds getBound() {
         return fbound;
     }
 }
