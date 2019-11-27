@@ -6,7 +6,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 
-import java.awt.Point;
+import java.awt.*;
 import java.util.LinkedList;
 
 class Snake {
@@ -20,7 +20,7 @@ class Snake {
         resetSnake(stage);
         group.getChildren().add(snake.getFirst());
     }
-    
+
     private void resetSnake(Stage stage) {
     	snake.clear();
     	snake.add(head);
@@ -51,8 +51,8 @@ class Snake {
     }
 
 
-        snake.add(new Rectangle(GameConstants.SNAKE_WIDTH, GameConstants.SNAKE_HEIGHT));
-    private void eat(Group group, Score score, GameObject food) {//added ein tail rectangle, übernimmt color von food,erhöht score um 1, macht schneller
+    private void eat(Group group, Score score, GameObject food) {
+        snake.add(new Rectangle(GameConstants.SNAKE_WIDTH, GameConstants.SNAKE_HEIGHT));//added ein tail rectangle, übernimmt color von food,erhöht score um 1, macht schneller
         snake.getLast().setFill(Color.color(food.getColor()[0], food.getColor()[1], food.getColor()[2])); //holt sich aus deathsoundMedia GameObject die Color von Food für sein Tail
         group.getChildren().add(snake.getLast()); //bringt den tail auf die Szene
         score.upScoreValue(); // added +1 zu scoreValue
@@ -94,9 +94,9 @@ class Snake {
         }
     }
 
-        if (direction.x != 0 || direction.y != 0) { //gibt es überhaupt dx/dy werte (wenn wir stehen z.B. nicht)
-    	
+
     public void moveSnake(Point direction, Stage stage) { //dx bzw dy ist jeweils + oder - speed, war zuvor 5
+        if (direction.x != 0 || direction.y != 0) { //gibt es überhaupt dx/dy werte (wenn wir stehen z.B. nicht)
             LinkedList<Rectangle> snakehelp = new LinkedList<>();
 
             for (int i = 0; i < snake.size(); i++) {
