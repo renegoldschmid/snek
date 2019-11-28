@@ -15,7 +15,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
-import java.awt.Point;
+import java.awt.*;
 import java.io.File;
 
 public class GameLoop extends Application {
@@ -26,14 +26,9 @@ public class GameLoop extends Application {
     private static MediaView splashView = new MediaView(splashPlayer);
     
     private Group root = new Group();
-    private Pane backgroundPane = new Pane(); //TODO NEU für Background
+    private Pane backgroundPane = new Pane();
     private Group splashscreen = new Group();
-    //TODO NEU - Background stuff
-    private Image imgSource;
-    private BackgroundImage backgroundImage;
-    private Background backgroundView;
-    private long lastUpdate = 0; //für Geschwindigkeitssteuerung
-    //TODO END Background
+    private long lastUpdate = 0;
 
     public static void main(String[] args) {
         launch(args);
@@ -49,17 +44,15 @@ public class GameLoop extends Application {
         primaryStage.setMinWidth(GameConstants.STAGE_MIN_WIDTH);
         primaryStage.setMinHeight(GameConstants.STAGE_MIN_HEIGHT);
 
-        //TODO NEU - Background stuff
-        imgSource = new Image("file:src/main/resources/at/ac/fhcampuswien/media/grassTile.png");
-        backgroundImage = new BackgroundImage(imgSource, BackgroundRepeat.REPEAT, BackgroundRepeat.REPEAT,
+        Image imgSource = new Image("file:src/main/resources/at/ac/fhcampuswien/media/grassTile.png");
+        BackgroundImage backgroundImage = new BackgroundImage(imgSource, BackgroundRepeat.REPEAT, BackgroundRepeat.REPEAT,
                 BackgroundPosition.DEFAULT, BackgroundSize.DEFAULT);
-        backgroundView = new Background(backgroundImage);
+        Background backgroundView = new Background(backgroundImage);
         backgroundPane.setBackground(backgroundView);
-        //TODO END Background
 
 
         int offset = GameConstants.SPEED; //TODO Variable Namen anpassen
-        Gameboard gameboard = new Gameboard(); // TODO NEW
+        Gameboard gameboard = new Gameboard();
         Control control = new Control();
         Snake snake = new Snake(root, primaryStage); //erstellt neues Snake Listen Objekt und getChilded es
         GameObject food = new GameObject();
@@ -72,10 +65,7 @@ public class GameLoop extends Application {
         createIntro(primaryStage);
 
         //Keyeventhandler fragt ab obs ein Keyevent gibt
-        scene.setOnKeyPressed(keyEvent -> {
-            control.keyHandler(keyEvent, snake, root, food, score, primaryStage);//control nimmt Keyevent und schaut speziell nach WASD
-
-        });
+        scene.setOnKeyPressed(keyEvent -> control.keyHandler(keyEvent, snake, root, food, score, primaryStage));
 
         timer = createTimer(primaryStage, offset, gameboard, control, snake, food, score);
         splashPlayer.setOnEndOfMedia(() -> {
@@ -139,8 +129,8 @@ public class GameLoop extends Application {
                     else if (control.getgoLeft()) {
                     	direction.x += -offset;
                     }
-                    
-                    snake.moveSnake(direction, primaryStage);
+
+                    snake.moveSnake(direction);
                     lastUpdate = now;
                 }
             }

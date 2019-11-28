@@ -4,11 +4,14 @@ import javafx.scene.Group;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
 
-public class Control {
+class Control {
 
-    private boolean goUp, goDown, goRight, goLeft;
+    private boolean goUp;
+    private boolean goDown;
+    private boolean goRight;
+    private boolean goLeft;
 
-    public void stopMovement() {
+    void stopMovement() {
         goUp = false;
         goDown = false;
         goRight = false;
@@ -16,24 +19,24 @@ public class Control {
     }
 
 
-    public boolean getgoUp() {
+    boolean getgoUp() {
         return goUp;
     }
 
-    public boolean getgoDown() {
+    boolean getgoDown() {
         return goDown;
     }
 
-    public boolean getgoLeft() {
+    boolean getgoLeft() {
         return goLeft;
     }
 
-    public boolean getgoRight() {
+    boolean getgoRight() {
         return goRight;
     }
 
 
-    public void keyHandler(KeyEvent keyEvent, Snake snake, Group group, GameObject food, Score score, Stage stage) {
+    void keyHandler(KeyEvent keyEvent, Snake snake, Group group, GameObject food, Score score, Stage stage) {
 
         switch (keyEvent.getCode()) {
             case W:
@@ -74,6 +77,8 @@ public class Control {
                 snake.respawn(group, food, score, stage, this);
                 AudioManager.stopGameovermusic();
                 AudioManager.restartIngamemusic();
+                break;
+            default:
                 break;
 
 

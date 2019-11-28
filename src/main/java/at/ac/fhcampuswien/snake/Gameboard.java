@@ -17,30 +17,30 @@ class Gameboard {
 
     private void initializeMessageFactory() {
         //add touch wall deaths
-        gameMessages.addGameMessage("Stop touching the wall \nas if it's your boyfriend.....", "wallDeath");
-        gameMessages.addGameMessage("You never touch me \nin the way you touched that wall :*(", "wallDeath");
-        gameMessages.addGameMessage("Walls are your favorite thing huh?", "wallDeath");
-        gameMessages.addGameMessage("The wall you touched is solid,\n no comin through", "wallDeath");
-        gameMessages.addGameMessage("Wall:1, You:0", "wallDeath");
-        gameMessages.addGameMessage("Mimimimi you dead!", "wallDeath");
-        gameMessages.addGameMessage("No one would survive this...", "wallDeath");
-        gameMessages.addGameMessage("You colored the wall, \nwhat a nice thing to do", "wallDeath");
-        gameMessages.addGameMessage("No touchy touchy le wall mi Friend! ", "wallDeath");
+        gameMessages.addGameMessage("Stop touching the wall \nas if it's your boyfriend.....", GameConstants.WALL_DEATH);
+        gameMessages.addGameMessage("You never touch me \nin the way you touched that wall :*(", GameConstants.WALL_DEATH);
+        gameMessages.addGameMessage("Walls are your favorite thing huh?", GameConstants.WALL_DEATH);
+        gameMessages.addGameMessage("The wall you touched is solid,\n no comin through", GameConstants.WALL_DEATH);
+        gameMessages.addGameMessage("Wall:1, You:0", GameConstants.WALL_DEATH);
+        gameMessages.addGameMessage("Mimimimi you dead!", GameConstants.WALL_DEATH);
+        gameMessages.addGameMessage("No one would survive this...", GameConstants.WALL_DEATH);
+        gameMessages.addGameMessage("You colored the wall, \nwhat a nice thing to do", GameConstants.WALL_DEATH);
+        gameMessages.addGameMessage("No touchy touchy le wall mi Friend! ", GameConstants.WALL_DEATH);
 
         //add touch tail deaths
-        gameMessages.addGameMessage("Touching yourself huh? ; )", "tailDeath");
-        gameMessages.addGameMessage("Snake ate herself in fury", "tailDeath");
-        gameMessages.addGameMessage("Not your best day is it?....", "tailDeath");
-        gameMessages.addGameMessage("Well...you tried...", "tailDeath");
-        gameMessages.addGameMessage("Stop trying...", "tailDeath");
-        gameMessages.addGameMessage("You touched that ass (tail..)!", "tailDeath");
+        gameMessages.addGameMessage("Touching yourself huh? ; )", GameConstants.TAIL_DEATH);
+        gameMessages.addGameMessage("Snake ate herself in fury", GameConstants.TAIL_DEATH);
+        gameMessages.addGameMessage("Not your best day is it?....", GameConstants.TAIL_DEATH);
+        gameMessages.addGameMessage("Well...you tried...", GameConstants.TAIL_DEATH);
+        gameMessages.addGameMessage("Stop trying...", GameConstants.TAIL_DEATH);
+        gameMessages.addGameMessage("You touched that ass (tail..)!", GameConstants.TAIL_DEATH);
 
     }
 
 
     void setDeathTouchWall(Score score, Group group, Stage stage) {
         Label deathTouchWall = new Label(gameMessages.getRandomGameMessageOfType("wallDeath")
-                + "\nPress R for respawn" + "\nScore: " + score.getScore());
+                + "\nPress R for respawn" + "\nScore: " + score.getScoreLabel());
         deathTouchWall.setFont(new Font("Calibri",80));
         deathTouchWall.setTextFill(Color.BLACK);
 
@@ -52,7 +52,7 @@ class Gameboard {
 
     void setDeathTouchTail(Score score, Group group, Stage stage) {
         Label deathTouchTail = new Label(gameMessages.getRandomGameMessageOfType("tailDeath") + "\nPress R for respawn"
-                +"\nScore: " + score.getScore());
+                + "\nScore: " + score.getScoreLabel());
         deathTouchTail.setFont(new Font("Calibri",80));
         deathTouchTail.setTextFill(Color.BLACK);
 
