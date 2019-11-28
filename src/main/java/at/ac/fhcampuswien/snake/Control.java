@@ -4,7 +4,7 @@ import javafx.scene.Group;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
 
-class Control {
+public class Control {
 
     private boolean goUp;
     private boolean goDown;
