@@ -15,8 +15,9 @@ public class Score {
 
     }
 
-        scoreValue = GameConstants.INIT_SCORE;
+
     void scoreRespawn(Group group) {
+        scoreValue = GameConstants.INIT_SCORE;
         score.setFont(new Font("Arial", 50));
         score.setText("Score: " + scoreValue);
         group.getChildren().add(score);
