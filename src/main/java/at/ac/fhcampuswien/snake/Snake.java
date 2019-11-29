@@ -96,7 +96,6 @@ class Snake {
         }
     }
 
-
     void moveSnake(Point direction) { //dx bzw dy ist jeweils + oder - speed, war zuvor 5
         if (direction.x != 0 || direction.y != 0) { //gibt es überhaupt dx/dy werte (wenn wir stehen z.B. nicht)
             LinkedList<Rectangle> snakehelp = new LinkedList<>();
