@@ -6,10 +6,12 @@ import javafx.scene.control.Label;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
+import org.apache.log4j.Logger;
 
 //Labels
 class Gameboard {
     private final MessageFactory gameMessages = new MessageFactory();
+    private static Logger logger = Logger.getLogger(Gameboard.class.getName());
 
     Gameboard() {
         initializeMessageFactory();
@@ -47,6 +49,7 @@ class Gameboard {
         group.getChildren().clear();
         deathTouchWall.relocate(200, stage.getHeight()/2-300);
         group.getChildren().add(deathTouchWall);
+        logger.info(String.format("Death because of Wall. Displaying message: %s", deathTouchWall.getAccessibleText()));
 
     }
 
@@ -59,7 +62,7 @@ class Gameboard {
         group.getChildren().clear();
         deathTouchTail.relocate(200, stage.getHeight()/2-200);
         group.getChildren().add(deathTouchTail);
-
+        logger.info(String.format("Death because of Tail bite. Displaying message: %s", deathTouchTail.getAccessibleText()));
     }
 
 }

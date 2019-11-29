@@ -60,7 +60,7 @@ class Snake {
         if (frameDelay >= GameConstants.FRAMEDELAY_MAX) { //maximale Grenze sonst wirds zu schnell
             //von speedRefresh abziehen
             frameDelay -= GameConstants.DELAY_DECREASE;
-            logger.info(String.format("Framedelay: %s", frameDelay));
+            logger.debug(String.format("Framedelay: %s", frameDelay));
         }
     }
 
