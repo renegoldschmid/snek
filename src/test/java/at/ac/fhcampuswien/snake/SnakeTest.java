@@ -77,4 +77,19 @@ public class SnakeTest {
         score.upScoreValue(); // added +1 zu scoreValue
     }
 
+    @Test
+    void testGetframeDelay() {
+    }
+
+    @Test
+    void testRespawn() {
+    }
+
+    @Test
+    void testCollision() {
+    }
+
+    @Test
+    void testMoveSnake() {
+    }
 }

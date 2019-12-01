@@ -6,62 +6,63 @@ import javafx.scene.control.Label;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
-
-import java.util.Random;
+import org.apache.log4j.Logger;
 
 //Labels
 class Gameboard {
-    private final String[] touchWall = new String[9];
-    private final String[] touchTail = new String[6];
-    private final Random rand = new Random();
+    private final MessageFactory gameMessages = new MessageFactory();
+    private static Logger logger = Logger.getLogger(Gameboard.class.getName());
 
-
-    private String[] stringsTouchWall() {
-        touchWall[0] = "Stop touching the wall \nas if it's your boyfriend.....";
-        touchWall[1] = "You never touch me \nin the way you touched that wall :*(";
-        touchWall[2] = "Walls are your favorite thing huh?";
-        touchWall[3] = "The wall you touched is solid,\n no comin through";
-        touchWall[4] = "Wall:1, You:0";
-        touchWall[5] = "Mimimimi you dead!";
-        touchWall[6] = "No one would survive this...";
-        touchWall[7] = "You colored the wall, \nwhat a nice thing to do";
-        touchWall[8] = "No touchy touchy le wall mi Friend! ";
-        return touchWall;
+    Gameboard() {
+        initializeMessageFactory();
     }
 
-    private String[] stringsTouchTail() {
-        touchTail[0] = "Touching yourself huh? ; )";
-        touchTail[1] = "Snake ate herself in fury";
-        touchTail[2] = "Not your best day is it?....";
-        touchTail[3] = "Well...you tried...";
-        touchTail[4] = "Stop trying...";
-        touchTail[5] = "You touched that ass (tail..)!";
-        return touchTail;
+    private void initializeMessageFactory() {
+        //add touch wall deaths
+        gameMessages.addGameMessage("Stop touching the wall \nas if it's your boyfriend.....", GameConstants.WALL_DEATH);
+        gameMessages.addGameMessage("You never touch me \nin the way you touched that wall :*(", GameConstants.WALL_DEATH);
+        gameMessages.addGameMessage("Walls are your favorite thing huh?", GameConstants.WALL_DEATH);
+        gameMessages.addGameMessage("The wall you touched is solid,\n no comin through", GameConstants.WALL_DEATH);
+        gameMessages.addGameMessage("Wall:1, You:0", GameConstants.WALL_DEATH);
+        gameMessages.addGameMessage("Mimimimi you dead!", GameConstants.WALL_DEATH);
+        gameMessages.addGameMessage("No one would survive this...", GameConstants.WALL_DEATH);
+        gameMessages.addGameMessage("You colored the wall, \nwhat a nice thing to do", GameConstants.WALL_DEATH);
+        gameMessages.addGameMessage("No touchy touchy le wall mi Friend! ", GameConstants.WALL_DEATH);
+
+        //add touch tail deaths
+        gameMessages.addGameMessage("Touching yourself huh? ; )", GameConstants.TAIL_DEATH);
+        gameMessages.addGameMessage("Snake ate herself in fury", GameConstants.TAIL_DEATH);
+        gameMessages.addGameMessage("Not your best day is it?....", GameConstants.TAIL_DEATH);
+        gameMessages.addGameMessage("Well...you tried...", GameConstants.TAIL_DEATH);
+        gameMessages.addGameMessage("Stop trying...", GameConstants.TAIL_DEATH);
+        gameMessages.addGameMessage("You touched that ass (tail..)!", GameConstants.TAIL_DEATH);
+
     }
 
 
     void setDeathTouchWall(Score score, Group group, Stage stage) {
-        Label deathTouchWall = new Label(stringsTouchWall()[rand.nextInt(9)]
-                + "\nPress R for respawn" + "\nScore: " + score.getScore());
+        Label deathTouchWall = new Label(gameMessages.getRandomGameMessageOfType("wallDeath")
+                + "\nPress R for respawn" + "\nScore: " + score.getScoreLabel());
         deathTouchWall.setFont(new Font("Calibri",80));
         deathTouchWall.setTextFill(Color.BLACK);
 
         group.getChildren().clear();
         deathTouchWall.relocate(200, stage.getHeight()/2-300);
         group.getChildren().add(deathTouchWall);
+        logger.info(String.format("Death because of Wall. Displaying message: %s", deathTouchWall.getAccessibleText()));
 
     }
 
     void setDeathTouchTail(Score score, Group group, Stage stage) {
-        Label deathTouchTail = new Label(stringsTouchTail()[rand.nextInt(6)] + "\nPress R for respawn"
-                +"\nScore: " + score.getScore());
+        Label deathTouchTail = new Label(gameMessages.getRandomGameMessageOfType("tailDeath") + "\nPress R for respawn"
+                + "\nScore: " + score.getScoreLabel());
         deathTouchTail.setFont(new Font("Calibri",80));
         deathTouchTail.setTextFill(Color.BLACK);
 
         group.getChildren().clear();
         deathTouchTail.relocate(200, stage.getHeight()/2-200);
         group.getChildren().add(deathTouchTail);
-
+        logger.info(String.format("Death because of Tail bite. Displaying message: %s", deathTouchTail.getAccessibleText()));
     }
 
 }
