@@ -98,8 +98,6 @@ class Snake {
                 GameLoop.stopIngamemusic();
                 GameLoop.restartGameovermusic();
             }
-
-
         }
     }
 
