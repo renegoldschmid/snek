@@ -3,12 +3,17 @@ package at.ac.fhcampuswien.snake;
 import javafx.scene.Group;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
+import org.apache.log4j.Logger;
 
 public class Control {
 
-    private boolean goUp, goDown, goRight, goLeft;
+    private boolean goUp;
+    private boolean goDown;
+    private boolean goRight;
+    private boolean goLeft;
+    private static Logger logger = Logger.getLogger(Control.class.getName());
 
-    public void stopMovement() {
+    void stopMovement() {
         goUp = false;
         goDown = false;
         goRight = false;
@@ -16,24 +21,24 @@ public class Control {
     }
 
 
-    public boolean getgoUp() {
+    boolean getgoUp() {
         return goUp;
     }
 
-    public boolean getgoDown() {
+    boolean getgoDown() {
         return goDown;
     }
 
-    public boolean getgoLeft() {
+    boolean getgoLeft() {
         return goLeft;
     }
 
-    public boolean getgoRight() {
+    boolean getgoRight() {
         return goRight;
     }
 
 
-    public void keyHandler(KeyEvent keyEvent, Snake snake, Group group, GameObject food, Score score, Stage stage) {
+    void keyHandler(KeyEvent keyEvent, Snake snake, Group group, GameObject food, Score score, Stage stage) {
 
         switch (keyEvent.getCode()) {
             case W:
@@ -43,6 +48,7 @@ public class Control {
                 goDown = false;     //"false" Fälle: dass man sich nicht schräg bewegen kann
                 goRight = false;
                 goLeft = false;
+                logger.debug("Snake is moving down!");
                 break;
 
             case S:
@@ -52,6 +58,7 @@ public class Control {
                 goUp = false;
                 goRight = false;
                 goLeft = false;
+                logger.debug("Snake is moving up!");
                 break;
 
             case D:
@@ -61,6 +68,7 @@ public class Control {
                 goUp = false;
                 goDown = false;
                 goLeft = false;
+                logger.debug("Snake is moving left!");
                 break;
             case A:
                 if (goRight)
@@ -69,11 +77,15 @@ public class Control {
                 goUp = false;
                 goDown = false;
                 goRight = false;
+                logger.debug("Snake is moving right!");
                 break;
             case R:
                 snake.respawn(group, food, score, stage, this);
                 AudioManager.stopGameovermusic();
                 AudioManager.restartIngamemusic();
+                logger.debug("Game was reset!");
+                break;
+            default:
                 break;
 
 

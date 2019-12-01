@@ -1,7 +1,11 @@
 package at.ac.fhcampuswien.snake;
 
 class GameConstants {
-	
+
+	// Message Types
+	static final String WALL_DEATH = "wallDeath";
+	static final String TAIL_DEATH = "tailDeath";
+
 	// Technical settings
 	static final long FRAMEDELAY = 25000000;
 	static final long FRAMEDELAY_MAX = 8000000;
@@ -21,4 +25,10 @@ class GameConstants {
 	static final int SNAKE_HEIGHT = 20;
 	static final int FOOD_WIDTH = 20;
 	static final int FOOD_HEIGHT = 20;
+	//Display Messages
+	static final String MESSAGE_SCORE = "Score: ";
+
+
+	private GameConstants() {
+	}
 }
