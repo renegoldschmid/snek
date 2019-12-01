@@ -7,7 +7,15 @@ import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import org.apache.log4j.Logger;
 
+import at.ac.fhcampuswien.database.DatabaseConstants;
+import at.ac.fhcampuswien.database.dbOperation;
+
 import java.awt.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.LinkedList;
 
 class Snake {
@@ -65,8 +73,7 @@ class Snake {
     }
 
     void collision(GameObject food, Group group, Bounds foodBound, Score score, Control control, Stage stage, Gameboard gameboard) { //gameobject sind obstacles so wie Food, Boundarys für Collisions
-        Bounds headBox = head.getBoundsInParent(); // erstellt eine Boundary um den Snakekopf
-
+        Bounds headBox = snakeBodyPartsList.getFirst().getBoundsInParent(); // erstellt eine Boundary um den Snakekopf
 
         if (headBox.intersects(foodBound)) {//überprüfung Collision Head mit Food Boundary
             eat(group, score, food);
@@ -74,15 +81,14 @@ class Snake {
             AudioManager.playEatsound();
         }
 
-        if (head.getLayoutX() <= 0 || head.getLayoutX() >= stage.getWidth() - 30 || // Überprüfung ob Head den Rand trifft
-                head.getLayoutY() <= 0 || head.getLayoutY() >= stage.getHeight() - 54) {
+        if (snakeBodyPartsList.getFirst().getLayoutX() <= 0 || snakeBodyPartsList.getFirst().getLayoutX() >= stage.getWidth() - 30 || // Überprüfung ob Head den Rand trifft
+        		snakeBodyPartsList.getFirst().getLayoutY() <= 0 || snakeBodyPartsList.getFirst().getLayoutY() >= stage.getHeight() - 54) {
             snakeDead(group, control, stage);
             gameboard.setDeathTouchWall(score, group, stage);
             AudioManager.playDeathsound();
             AudioManager.stopIngamemusic();
             AudioManager.restartGameovermusic();
         }
-
 
         for (int i = 1; i < this.snakeBodyPartsList.size(); i++) { //Überprüfung Snake beisst sich in den oasch
             if (headBox.intersects(this.snakeBodyPartsList.get(i).getBoundsInParent())) {
@@ -117,4 +123,128 @@ class Snake {
             }
         }
     }
+
+	public void saveState(Group group, GameObject food, Score score) {
+		Connection conn = null;
+		Statement stmt = null;
+		try {
+			// STEP 1: Register JDBC driver
+			Class.forName(DatabaseConstants.JDBC_DRIVER);
+
+			// STEP 2: Open a connection
+			System.out.println("Connecting to database...");
+			conn = DriverManager.getConnection(DatabaseConstants.DB_URL, DatabaseConstants.USER,
+					DatabaseConstants.PASS);
+
+			// STEP 3: Execute a query
+			System.out.println("Creating table in given database...");
+			stmt = conn.createStatement();
+
+			String sql = "DROP TABLE SNAKE_BODY_PART";
+			stmt.executeUpdate(sql);
+
+			sql = "CREATE TABLE IF NOT EXISTS SNAKE_BODY_PART " + "(id INTEGER auto_increment not NULL, "
+					+ " red DOUBLE, " + " green DOUBLE, " + " blue DOUBLE, " + " height DOUBLE, " + " width DOUBLE, "
+					+ " pos_x DOUBLE, " + " pos_y DOUBLE, " + " PRIMARY KEY ( id ))";
+			stmt.executeUpdate(sql);
+			System.out.println("Created table in given database...");
+
+			// STEP 4: Clean-up environment
+			stmt.close();
+
+			for (Rectangle bodyPart : snakeBodyPartsList) {
+				Color color = (Color) bodyPart.getFill();
+				dbOperation.insertBodyPart(conn, color, bodyPart.getHeight(), bodyPart.getWidth(),
+						bodyPart.getLayoutX(), bodyPart.getLayoutY());
+			}
+
+		} catch (SQLException se) {
+			// Handle errors for JDBC
+			se.printStackTrace();
+		} catch (Exception e) {
+			// Handle errors for Class.forName
+			e.printStackTrace();
+		} finally {
+			// finally block used to close resources
+			try {
+				if (stmt != null)
+					stmt.close();
+			} catch (SQLException se2) {
+			} // nothing we can do
+			try {
+				if (conn != null)
+					conn.close();
+			} catch (SQLException se) {
+				se.printStackTrace();
+			} // end finally try
+		} // end try
+	}
+	
+	public void reloadSnake(Group group, GameObject food, Score score, Stage stage, Control control) {
+		group.getChildren().clear();
+		snakeBodyPartsList.clear();
+        food.setFood(group, stage);
+        score.scoreRespawn(group);
+        frameDelay = GameConstants.FRAMEDELAY;
+        
+        control.stopMovement();
+	}
+	
+	public void loadState(Score score, Group group) {
+		Connection conn = null;
+		Statement stmt = null;
+		try {
+			// STEP 1: Register JDBC driver
+			Class.forName(DatabaseConstants.JDBC_DRIVER);
+
+			// STEP 2: Open a connection
+			System.out.println("Connecting to database...");
+			conn = DriverManager.getConnection(DatabaseConstants.DB_URL, DatabaseConstants.USER,
+					DatabaseConstants.PASS);
+
+			// STEP 3: Execute a query
+			System.out.println("Connected database successfully...");
+			stmt = conn.createStatement();
+			String sql = "SELECT id, red, green, blue, height, width, pos_x, pos_y FROM SNAKE_BODY_PART ORDER BY id ASC";
+			ResultSet rs = stmt.executeQuery(sql);
+
+			// STEP 4: Extract data from result set
+			while (rs.next()) {
+				// Retrieve by column name
+				snakeBodyPartsList.add(new Rectangle(rs.getDouble("height"),rs.getDouble("width")));
+				Color color = new Color(rs.getDouble("red"), rs.getDouble("green"), rs.getDouble("blue"), 1);
+				snakeBodyPartsList.getLast().setFill(color);
+				snakeBodyPartsList.getLast().relocate(rs.getDouble("pos_x"), rs.getDouble("pos_y"));
+				group.getChildren().add(snakeBodyPartsList.getLast());
+				if (rs.getInt("id") != 1) { // Don't increase score for the head of the snake
+					score.upScoreValue();
+				}
+				if (frameDelay >= GameConstants.FRAMEDELAY_MAX) {
+		            frameDelay -= GameConstants.DELAY_DECREASE;
+		        }
+			}
+			// STEP 5: Clean-up environment
+			rs.close();
+		} catch (SQLException se) {
+			// Handle errors for JDBC
+			se.printStackTrace();
+		} catch (Exception e) {
+			// Handle errors for Class.forName
+			e.printStackTrace();
+		} finally {
+			// finally block used to close resources
+			try {
+				if (stmt != null)
+					stmt.close();
+			} catch (SQLException se2) {
+			} // nothing we can do
+			try {
+				if (conn != null)
+					conn.close();
+			} catch (SQLException se) {
+				se.printStackTrace();
+			} // end finally try
+		} // end try
+		System.out.println("Goodbye!");
+	}
 }

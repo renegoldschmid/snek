@@ -1,9 +1,18 @@
 package at.ac.fhcampuswien.snake;
 
 import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.Statement;
+
 import org.apache.log4j.Logger;
+
+import at.ac.fhcampuswien.database.DatabaseConstants;
 
 public class Control {
 
@@ -85,10 +94,16 @@ public class Control {
                 AudioManager.restartIngamemusic();
                 logger.debug("Game was reset!");
                 break;
+            case P:
+            	// todo save
+				snake.saveState(group, food, score);
+            	break;
+            case L:
+            	snake.reloadSnake(group, food, score, stage, this);
+            	snake.loadState(score, group);
+            	break;
             default:
                 break;
-
-
         }
     }
 }
