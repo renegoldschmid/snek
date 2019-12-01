@@ -5,11 +5,13 @@ import javafx.scene.Group;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
+import org.apache.log4j.Logger;
 
 import java.util.Random;
 
 
 class GameObject {
+    private static Logger logger = Logger.getLogger(GameObject.class.getName());
     private Random randomFoodColorOffset = new Random();
     private Rectangle food = new Rectangle(GameConstants.FOOD_WIDTH, GameConstants.FOOD_HEIGHT); //public um X/Y Koordinaten zu bekommen
     private double redPart;
@@ -36,7 +38,7 @@ class GameObject {
         food.relocate(randomFoodColorOffset.nextInt((int) stage.getWidth() - GameConstants.FOOD_BORDER_OFFSET), randomFoodColorOffset.nextInt((int) stage.getHeight() - GameConstants.FOOD_BORDER_OFFSET)); // Random Location mit Abstand vom Rand jeweils 40
         g.getChildren().add(food);
         fbound = food.getBoundsInParent();
-
+        logger.debug(String.format("Food in Color: red: %f, green: %f, blue: %f, spawned at: X:%f Y:%f", redPart, greenPart, bluePart, food.getX(), food.getY()));
     }
 
     Bounds getBound() {

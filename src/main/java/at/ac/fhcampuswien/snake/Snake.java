@@ -5,12 +5,14 @@ import javafx.scene.Group;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
+import org.apache.log4j.Logger;
 
 import java.awt.*;
 import java.util.LinkedList;
 
 class Snake {
-
+   
+    static Logger logger = Logger.getLogger(Snake.class.getName());
     private long frameDelay = GameConstants.FRAMEDELAY; //25-30 mill. guter Startwert
     private long delayDecrease = GameConstants.DELAY_DECREASE;  //von speedRefresh abziehen
     private LinkedList<Rectangle> snakeBodyPartsList = new LinkedList<>();
@@ -57,8 +59,10 @@ class Snake {
         group.getChildren().add(snakeBodyPartsList.getLast()); //bringt den tail auf die Szene
         score.upScoreValue(); // added +1 zu scoreValue
         if (frameDelay >= GameConstants.FRAMEDELAY_MAX) { //maximale Grenze sonst wirds zu schnell
-            frameDelay -= delayDecrease;
-            System.out.println(frameDelay);
+            //von speedRefresh abziehen
+            frameDelay -= GameConstants.
+              ;
+            logger.debug(String.format("Framedelay: %s", frameDelay));
         }
     }
 
@@ -84,7 +88,7 @@ class Snake {
 
         for (int i = 1; i < this.snakeBodyPartsList.size(); i++) { //Überprüfung Snake beisst sich in den oasch
             if (headBox.intersects(this.snakeBodyPartsList.get(i).getBoundsInParent())) {
-                System.out.println("DEAD");
+                logger.info("Snake died!");
                 snakeDead(group, control, stage);
                 gameboard.setDeathTouchTail(score, group, stage);
                 AudioManager.playDeathsound();
@@ -93,7 +97,6 @@ class Snake {
             }
         }
     }
-
 
     void moveSnake(Point direction) { //dx bzw dy ist jeweils + oder - speed, war zuvor 5
         if (direction.x != 0 || direction.y != 0) { //gibt es überhaupt dx/dy werte (wenn wir stehen z.B. nicht)

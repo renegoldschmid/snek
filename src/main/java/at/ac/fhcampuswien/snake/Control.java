@@ -3,6 +3,7 @@ package at.ac.fhcampuswien.snake;
 import javafx.scene.Group;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
+import org.apache.log4j.Logger;
 
 class Control {
 
@@ -10,6 +11,7 @@ class Control {
     private boolean goDown;
     private boolean goRight;
     private boolean goLeft;
+    private static Logger logger = Logger.getLogger(Control.class.getName());
 
     void stopMovement() {
         goUp = false;
@@ -46,6 +48,7 @@ class Control {
                 goDown = false;     //"false" Fälle: dass man sich nicht schräg bewegen kann
                 goRight = false;
                 goLeft = false;
+                logger.debug("Snake is moving down!");
                 break;
 
             case S:
@@ -55,6 +58,7 @@ class Control {
                 goUp = false;
                 goRight = false;
                 goLeft = false;
+                logger.debug("Snake is moving up!");
                 break;
 
             case D:
@@ -64,6 +68,7 @@ class Control {
                 goUp = false;
                 goDown = false;
                 goLeft = false;
+                logger.debug("Snake is moving left!");
                 break;
             case A:
                 if (goRight)
@@ -72,11 +77,15 @@ class Control {
                 goUp = false;
                 goDown = false;
                 goRight = false;
+                logger.debug("Snake is moving right!");
                 break;
             case R:
                 snake.respawn(group, food, score, stage, this);
                 AudioManager.stopGameovermusic();
                 AudioManager.restartIngamemusic();
+                logger.debug("Game was reset!");
+                break;
+            default:
                 break;
             default:
                 break;

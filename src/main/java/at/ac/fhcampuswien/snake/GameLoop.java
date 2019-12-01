@@ -14,11 +14,13 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import org.apache.log4j.PropertyConfigurator;
 
 import java.awt.*;
 import java.io.File;
 
 public class GameLoop extends Application {
+
 
 	private static File splashFile = new File("src/main/resources/at/ac/fhcampuswien/media/splash.mp4");
     private static Media splashMedia = new Media(splashFile.toURI().toString());
@@ -36,6 +38,7 @@ public class GameLoop extends Application {
 
     @Override
     public void start(Stage primaryStage) {
+        PropertyConfigurator.configure("./etc/log4j.properties");
         AnimationTimer timer;
 
         primaryStage.setWidth(GameConstants.STAGE_WIDTH);
