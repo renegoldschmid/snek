@@ -1,19 +1,10 @@
 package at.ac.fhcampuswien.snake;
 
+import org.apache.log4j.Logger;
+
 import javafx.scene.Group;
-import javafx.scene.Node;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
-import org.apache.log4j.Logger;
-
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.sql.Statement;
-
-import org.apache.log4j.Logger;
-
-import at.ac.fhcampuswien.database.DatabaseConstants;
 
 class Control {
 

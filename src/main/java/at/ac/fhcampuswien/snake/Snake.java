@@ -194,23 +194,18 @@ class Snake {
 		Connection conn = null;
 		Statement stmt = null;
 		try {
-			// STEP 1: Register JDBC driver
 			Class.forName(DatabaseConstants.JDBC_DRIVER);
 
-			// STEP 2: Open a connection
 			System.out.println("Connecting to database...");
 			conn = DriverManager.getConnection(DatabaseConstants.DB_URL, DatabaseConstants.USER,
 					DatabaseConstants.PASS);
 
-			// STEP 3: Execute a query
 			System.out.println("Connected database successfully...");
 			stmt = conn.createStatement();
 			String sql = "SELECT id, red, green, blue, height, width, pos_x, pos_y FROM SNAKE_BODY_PART ORDER BY id ASC";
 			ResultSet rs = stmt.executeQuery(sql);
 
-			// STEP 4: Extract data from result set
 			while (rs.next()) {
-				// Retrieve by column name
 				snakeBodyPartsList.add(new Rectangle(rs.getDouble("height"),rs.getDouble("width")));
 				Color color = new Color(rs.getDouble("red"), rs.getDouble("green"), rs.getDouble("blue"), 1);
 				snakeBodyPartsList.getLast().setFill(color);
@@ -223,7 +218,6 @@ class Snake {
 		            frameDelay -= GameConstants.DELAY_DECREASE;
 		        }
 			}
-			// STEP 5: Clean-up environment
 			rs.close();
 		} catch (SQLException se) {
 			// Handle errors for JDBC
@@ -245,6 +239,5 @@ class Snake {
 				se.printStackTrace();
 			} // end finally try
 		} // end try
-		System.out.println("Goodbye!");
 	}
 }
