@@ -24,7 +24,6 @@ class Score {
         scoreLabel.setFont(new Font("Arial", 50));
         scoreLabel.setText(GameConstants.MESSAGE_SCORE + scoreValue);
         group.getChildren().add(scoreLabel);
-
     }
 
     void upScoreValue() {
@@ -36,6 +35,4 @@ class Score {
     int getScoreLabel() {
         return scoreValue;
     }
-
-
 }
