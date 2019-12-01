@@ -4,6 +4,7 @@ import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
+import org.apache.log4j.Logger;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -14,7 +15,7 @@ import org.apache.log4j.Logger;
 
 import at.ac.fhcampuswien.database.DatabaseConstants;
 
-public class Control {
+class Control {
 
     private boolean goUp;
     private boolean goDown;
@@ -57,7 +58,7 @@ public class Control {
                 goDown = false;     //"false" Fälle: dass man sich nicht schräg bewegen kann
                 goRight = false;
                 goLeft = false;
-                logger.debug("Snake is moving down!");
+                logger.debug("Snake is moving up!");
                 break;
 
             case S:
@@ -67,7 +68,7 @@ public class Control {
                 goUp = false;
                 goRight = false;
                 goLeft = false;
-                logger.debug("Snake is moving up!");
+                logger.debug("Snake is moving down!");
                 break;
 
             case D:
@@ -77,7 +78,7 @@ public class Control {
                 goUp = false;
                 goDown = false;
                 goLeft = false;
-                logger.debug("Snake is moving left!");
+                logger.debug("Snake is moving right!");
                 break;
             case A:
                 if (goRight)
@@ -86,7 +87,7 @@ public class Control {
                 goUp = false;
                 goDown = false;
                 goRight = false;
-                logger.debug("Snake is moving right!");
+                logger.debug("Snake is moving left!");
                 break;
             case R:
                 snake.respawn(group, food, score, stage, this);

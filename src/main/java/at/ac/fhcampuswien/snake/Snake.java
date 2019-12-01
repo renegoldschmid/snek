@@ -6,7 +6,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import org.apache.log4j.Logger;
-
 import at.ac.fhcampuswien.database.DatabaseConstants;
 import at.ac.fhcampuswien.database.dbOperation;
 
@@ -20,7 +19,7 @@ import java.util.LinkedList;
 
 class Snake {
 
-    static Logger logger = Logger.getLogger(Snake.class.getName());
+    private static Logger logger = Logger.getLogger(Snake.class.getName());
     private long frameDelay = GameConstants.FRAMEDELAY; //25-30 mill. guter Startwert
     private LinkedList<Rectangle> snakeBodyPartsList = new LinkedList<>();
     private Rectangle head = new Rectangle(GameConstants.SNAKE_WIDTH, GameConstants.SNAKE_HEIGHT); // hier Initialisiert, weil in mehreren Methoden
@@ -67,7 +66,8 @@ class Snake {
         score.upScoreValue(); // added +1 zu scoreValue
         if (frameDelay >= GameConstants.FRAMEDELAY_MAX) { //maximale Grenze sonst wirds zu schnell
             //von speedRefresh abziehen
-            frameDelay -= GameConstants.DELAY_DECREASE;
+            long delayDecrease = GameConstants.DELAY_DECREASE;
+            frameDelay -= delayDecrease;
             logger.debug(String.format("Framedelay: %s", frameDelay));
         }
     }
