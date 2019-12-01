@@ -25,9 +25,7 @@ class GameConstants {
 	static final int SNAKE_HEIGHT = 20;
 	static final int FOOD_WIDTH = 20;
 	static final int FOOD_HEIGHT = 20;
-	static final String MESSAGE_SCORE = "Score: ";
 
-=======
 	//Display Messages
 	static final String MESSAGE_SCORE = "Score: ";
 

@@ -48,7 +48,7 @@ class Control {
                 goDown = false;     //"false" Fälle: dass man sich nicht schräg bewegen kann
                 goRight = false;
                 goLeft = false;
-                logger.debug("Snake is moving down!");
+                logger.debug("Snake is moving up!");
                 break;
 
             case S:
@@ -58,7 +58,7 @@ class Control {
                 goUp = false;
                 goRight = false;
                 goLeft = false;
-                logger.debug("Snake is moving up!");
+                logger.debug("Snake is moving down!");
                 break;
 
             case D:
@@ -68,7 +68,7 @@ class Control {
                 goUp = false;
                 goDown = false;
                 goLeft = false;
-                logger.debug("Snake is moving left!");
+                logger.debug("Snake is moving right!");
                 break;
             case A:
                 if (goRight)
@@ -77,15 +77,13 @@ class Control {
                 goUp = false;
                 goDown = false;
                 goRight = false;
-                logger.debug("Snake is moving right!");
+                logger.debug("Snake is moving left!");
                 break;
             case R:
                 snake.respawn(group, food, score, stage, this);
                 AudioManager.stopGameovermusic();
                 AudioManager.restartIngamemusic();
                 logger.debug("Game was reset!");
-                break;
-            default:
                 break;
             default:
                 break;
