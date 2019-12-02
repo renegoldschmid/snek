@@ -16,7 +16,6 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 import org.apache.log4j.PropertyConfigurator;
 
-import java.awt.*;
 import java.io.File;
 
 public class GameLoop extends Application {
@@ -30,6 +29,7 @@ public class GameLoop extends Application {
     private Group root = new Group();
     private Pane backgroundPane = new Pane();
     private Group splashscreen = new Group();
+    private ApplicationInteractions applicationInteractions;
     private long lastUpdate = 0;
 
     public static void main(String[] args) {
@@ -46,6 +46,8 @@ public class GameLoop extends Application {
         
         primaryStage.setMinWidth(GameConstants.STAGE_MIN_WIDTH);
         primaryStage.setMinHeight(GameConstants.STAGE_MIN_HEIGHT);
+
+        applicationInteractions= new ApplicationInteractions(root,primaryStage);
 
         Image imgSource = new Image("file:src/main/resources/at/ac/fhcampuswien/media/grassTile.png");
         BackgroundImage backgroundImage = new BackgroundImage(imgSource, BackgroundRepeat.REPEAT, BackgroundRepeat.REPEAT,
@@ -70,7 +72,7 @@ public class GameLoop extends Application {
         //Keyeventhandler fragt ab obs ein Keyevent gibt
         scene.setOnKeyPressed(keyEvent -> control.keyHandler(keyEvent, snake, root, food, score, primaryStage));
 
-        timer = createTimer(primaryStage, offset, gameboard, control, snake, food, score);
+        timer = createTimer(offset, gameboard, control, snake, food, score);
         splashPlayer.setOnEndOfMedia(() -> {
             primaryStage.setScene(scene);
             fadeBlackToTransparent.play();
@@ -106,39 +108,22 @@ public class GameLoop extends Application {
 	}
     
     
-	private AnimationTimer createTimer(Stage primaryStage, int offset, Gameboard gameboard, Control control, Snake snake,
+	private AnimationTimer createTimer(int offset, Gameboard gameboard, Control control, Snake snake,
 			GameObject food, Score score) {
 		
 		AnimationTimer timer;
 		timer = new AnimationTimer() {
             @Override
             public void handle(long now) {
-
                 if (now - lastUpdate >= snake.getframeDelay()) {
-
-                    Point direction = new Point(0,0);
-
-                    snake.collision(food, root, food.getBound(), score, control, primaryStage, gameboard);
-
-                    if (control.getgoUp()) {
-                    	direction.y += -offset; //offset="speed"
-                    }
-                    else if (control.getgoDown()) {
-                    	direction.y += offset;
-                    }
-                    else if (control.getgoRight()) {
-                    	direction.x += offset;
-                    }
-                    else if (control.getgoLeft()) {
-                    	direction.x += -offset;
-                    }
-
-                    snake.moveSnake(direction);
+                    applicationInteractions.intervalMoveSnake(snake, food, score, control, gameboard, offset);
                     lastUpdate = now;
                 }
             }
         };
 		return timer;
 	}
+
+
 
 }

@@ -13,8 +13,8 @@ import java.util.LinkedList;
 class Snake {
 
     private static Logger logger = Logger.getLogger(Snake.class.getName());
-    private long frameDelay = GameConstants.FRAMEDELAY; //25-30 mill. guter Startwert
-    private LinkedList<Rectangle> snakeBodyPartsList = new LinkedList<>();
+    long frameDelay = GameConstants.FRAMEDELAY; //25-30 mill. guter Startwert
+    LinkedList<Rectangle> snakeBodyPartsList = new LinkedList<>();
     private Rectangle head = new Rectangle(GameConstants.SNAKE_WIDTH, GameConstants.SNAKE_HEIGHT); // hier Initialisiert, weil in mehreren Methoden
 
     Snake(Group group, Stage stage) {
@@ -52,7 +52,7 @@ class Snake {
     }
 
 
-    private void eat(Group group, Score score, GameObject food) {
+    void eat(Group group, Score score, GameObject food) {
         snakeBodyPartsList.add(new Rectangle(GameConstants.SNAKE_WIDTH, GameConstants.SNAKE_HEIGHT));//added ein tail rectangle, übernimmt color von food,erhöht score um 1, macht schneller
         snakeBodyPartsList.getLast().setFill(Color.color(food.getColor()[0], food.getColor()[1], food.getColor()[2])); //holt sich aus deathsoundMedia GameObject die Color von Food für sein Tail
         group.getChildren().add(snakeBodyPartsList.getLast()); //bringt den tail auf die Szene
@@ -68,7 +68,6 @@ class Snake {
 
     void collision(GameObject food, Group group, Bounds foodBound, Score score, Control control, Stage stage, Gameboard gameboard) { //gameobject sind obstacles so wie Food, Boundarys für Collisions
         Bounds headBox = head.getBoundsInParent(); // erstellt eine Boundary um den Snakekopf
-
 
         if (headBox.intersects(foodBound)) {//überprüfung Collision Head mit Food Boundary
             eat(group, score, food);

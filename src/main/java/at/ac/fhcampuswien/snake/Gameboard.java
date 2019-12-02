@@ -42,7 +42,7 @@ class Gameboard {
 
     void setDeathTouchWall(Score score, Group group, Stage stage) {
         Label deathTouchWall = new Label(gameMessages.getRandomGameMessageOfType("wallDeath")
-                + "\nPress R for respawn" + "\nScore: " + score.getScoreLabel());
+                + "\nPress R for respawn" + "\nScore: " + score.getScoreValue());
         deathTouchWall.setFont(new Font("Calibri",80));
         deathTouchWall.setTextFill(Color.BLACK);
 
@@ -55,7 +55,7 @@ class Gameboard {
 
     void setDeathTouchTail(Score score, Group group, Stage stage) {
         Label deathTouchTail = new Label(gameMessages.getRandomGameMessageOfType("tailDeath") + "\nPress R for respawn"
-                + "\nScore: " + score.getScoreLabel());
+                + "\nScore: " + score.getScoreValue());
         deathTouchTail.setFont(new Font("Calibri",80));
         deathTouchTail.setTextFill(Color.BLACK);
 
