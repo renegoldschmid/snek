@@ -38,7 +38,7 @@ public class GameLoop extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        PropertyConfigurator.configure("./etc/log4j.properties");
+        PropertyConfigurator.configure("./src/main/resources/at/ac/fhcampuswien/configurations/main/log4j.properties");
         AnimationTimer timer;
 
         primaryStage.setWidth(GameConstants.STAGE_WIDTH);

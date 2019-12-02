@@ -29,7 +29,7 @@ public class SnakeTest {
 
     @Start
     public void start(Stage stage) {
-        PropertyConfigurator.configure("./etc/log4jTests.properties");
+        PropertyConfigurator.configure("./src/main/resources/at/ac/fhcampuswien/configurations/test/log4jTests.properties");
         group = new Group();
         stage.setWidth(GameConstants.STAGE_WIDTH);
         stage.setHeight(GameConstants.STAGE_HEIGHT);
@@ -44,7 +44,7 @@ public class SnakeTest {
         backgroundPane.setBackground(backgroundView);
         Scene scene = new Scene(backgroundPane, stage.getWidth(), stage.getHeight(), Color.DARKGREEN);
         snake = new Snake(group, stage);
-        scene.setOnKeyPressed(keyEvent -> control.keyHandler(keyEvent, snake, group, food, score, stage));//control nimmt Keyevent und schaut speziell nach WASD);
+        scene.setOnKeyPressed(keyEvent -> control.keyHandler(keyEvent, snake, group, food, score, stage));
         gameboard = new Gameboard();
         applicationInteractions = new ApplicationInteractions(group,stage);
 
@@ -99,6 +99,23 @@ public class SnakeTest {
         Assert.assertEquals(18, snake.snakeBodyPartsList.size());
         Assert.assertEquals(17,score.getScoreValue());
         Assert.assertEquals(Color.color(food.getColor()[0],food.getColor()[1],food.getColor()[2]),snake.snakeBodyPartsList.getLast().getFill());
+    }
+
+    @Test
+    void testSnakeRespawn_Death(){
+        testMoveSnakeLeft_Movement();
+        testMoveSnakeLeft_Movement();
+        testMoveSnakeLeft_Movement();
+        testMoveSnakeUp_Movement();
+        snake.respawn(group,food,score,stage,control);
+        Assert.assertEquals(GameConstants.STAGE_HEIGHT / 2,snake.snakeBodyPartsList.getFirst().getLayoutY(),0);
+        Assert.assertEquals(GameConstants.STAGE_WIDTH / 2,snake.snakeBodyPartsList.getFirst().getLayoutX(),0);
+        Assert.assertEquals(GameConstants.FRAMEDELAY,snake.frameDelay); // zurück zum Standardwert
+        Assert.assertFalse(control.goDown);
+        Assert.assertFalse(control.goUp);
+        Assert.assertFalse(control.goRight);
+        Assert.assertFalse(control.goLeft);
+        Assert.assertEquals(1,snake.snakeBodyPartsList.size());
     }
 
     @Test
