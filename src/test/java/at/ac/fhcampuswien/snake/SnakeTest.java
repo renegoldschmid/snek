@@ -162,6 +162,7 @@ public class SnakeTest {
         Assert.assertFalse(control.goRight);
         Assert.assertFalse(control.goLeft);
         Assert.assertEquals(1,snake.snakeBodyPartsList.size());
+
     }
 
     @Test

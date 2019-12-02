@@ -1,0 +1,8 @@
+2019-12-02 18:18:24 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Tabelle "SNAKE_BODY_PART" nicht gefunden
+Table "SNAKE_BODY_PART" not found; SQL statement:
+DROP TABLE SNAKE_BODY_PART [42102-199]
+2019-12-02 18:28:48 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Tabelle "SNAKE_BODY_PART" nicht gefunden
+Table "SNAKE_BODY_PART" not found; SQL statement:
+TRUNCATE TABLE SNAKE_BODY_PART [42102-199]

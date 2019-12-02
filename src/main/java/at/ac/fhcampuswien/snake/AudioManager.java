@@ -7,7 +7,6 @@ import org.apache.log4j.Logger;
 
 import java.io.File;
 
-
 class AudioManager {
   private static Logger logger = Logger.getLogger(AudioManager.class.getName());
 	private static File ingamemusicFile = new File("src/main/resources/at/ac/fhcampuswien/media/sound/music/ingame2.mp3");
