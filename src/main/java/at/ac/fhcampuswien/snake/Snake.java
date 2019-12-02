@@ -1,21 +1,19 @@
 package at.ac.fhcampuswien.snake;
 
+import java.awt.Point;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.LinkedList;
+
+import org.apache.log4j.Logger;
+
+import at.ac.fhcampuswien.database.DatabaseConstants;
+import at.ac.fhcampuswien.database.DatabaseManager;
 import javafx.geometry.Bounds;
 import javafx.scene.Group;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
-import org.apache.log4j.Logger;
-import at.ac.fhcampuswien.database.DatabaseConstants;
-import at.ac.fhcampuswien.database.DbOperation;
-
-import java.awt.*;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.LinkedList;
 
 class Snake {
 
@@ -23,6 +21,7 @@ class Snake {
     private long frameDelay = GameConstants.FRAMEDELAY; //25-30 mill. guter Startwert
     private LinkedList<Rectangle> snakeBodyPartsList = new LinkedList<>();
     private Rectangle head = new Rectangle(GameConstants.SNAKE_WIDTH, GameConstants.SNAKE_HEIGHT); // hier Initialisiert, weil in mehreren Methoden
+    private DatabaseManager db = new DatabaseManager();
 
     Snake(Group group, Stage stage) {
         resetSnake(stage);
@@ -125,59 +124,34 @@ class Snake {
     }
 
 	public void saveState(Group group, GameObject food, Score score) {
-		Connection conn = null;
-		Statement stmt = null;
+		db.truncateTable(DatabaseConstants.SQL_TABLE_SBP);
+		for (Rectangle bodyPart : snakeBodyPartsList) {
+			Color color = (Color) bodyPart.getFill();
+			db.insertBodyPart(color, bodyPart.getHeight(), bodyPart.getWidth(), bodyPart.getLayoutX(),
+					bodyPart.getLayoutY());
+		}
+	}
+	
+	public void loadState(Score score, Group group) {
+		ResultSet rs = db.selectBodyParts();
 		try {
-			// STEP 1: Register JDBC driver
-			Class.forName(DatabaseConstants.JDBC_DRIVER);
-
-			// STEP 2: Open a connection
-			System.out.println("Connecting to database...");
-			conn = DriverManager.getConnection(DatabaseConstants.DB_URL, DatabaseConstants.USER,
-					DatabaseConstants.PASS);
-
-			// STEP 3: Execute a query
-			System.out.println("Creating table in given database...");
-			stmt = conn.createStatement();
-
-			String sql = "DROP TABLE SNAKE_BODY_PART";
-			stmt.executeUpdate(sql);
-
-			sql = "CREATE TABLE IF NOT EXISTS SNAKE_BODY_PART " + "(id INTEGER auto_increment not NULL, "
-					+ " red DOUBLE, " + " green DOUBLE, " + " blue DOUBLE, " + " height DOUBLE, " + " width DOUBLE, "
-					+ " pos_x DOUBLE, " + " pos_y DOUBLE, " + " PRIMARY KEY ( id ))";
-			stmt.executeUpdate(sql);
-			System.out.println("Created table in given database...");
-
-			// STEP 4: Clean-up environment
-			stmt.close();
-
-			for (Rectangle bodyPart : snakeBodyPartsList) {
-				Color color = (Color) bodyPart.getFill();
-				DbOperation.insertBodyPart(conn, color, bodyPart.getHeight(), bodyPart.getWidth(),
-						bodyPart.getLayoutX(), bodyPart.getLayoutY());
+			while (rs.next()) {
+				snakeBodyPartsList.add(new Rectangle(rs.getDouble("height"), rs.getDouble("width")));
+				Color color = new Color(rs.getDouble("red"), rs.getDouble("green"), rs.getDouble("blue"), 1);
+				snakeBodyPartsList.getLast().setFill(color);
+				snakeBodyPartsList.getLast().relocate(rs.getDouble("pos_x"), rs.getDouble("pos_y"));
+				group.getChildren().add(snakeBodyPartsList.getLast());
+				if (rs.getInt("id") != 1) { // Don't increase score for the head of the snake
+					score.upScoreValue();
+				}
+				if (frameDelay >= GameConstants.FRAMEDELAY_MAX) {
+					frameDelay -= GameConstants.DELAY_DECREASE;
+				}
 			}
-
-		} catch (SQLException se) {
-			// Handle errors for JDBC
-			se.printStackTrace();
-		} catch (Exception e) {
-			// Handle errors for Class.forName
+			rs.close();
+		} catch (SQLException e) {
 			e.printStackTrace();
-		} finally {
-			// finally block used to close resources
-			try {
-				if (stmt != null)
-					stmt.close();
-			} catch (SQLException se2) {
-			} // nothing we can do
-			try {
-				if (conn != null)
-					conn.close();
-			} catch (SQLException se) {
-				se.printStackTrace();
-			} // end finally try
-		} // end try
+		}
 	}
 	
 	public void reloadSnake(Group group, GameObject food, Score score, Stage stage, Control control) {
@@ -188,56 +162,5 @@ class Snake {
         frameDelay = GameConstants.FRAMEDELAY;
         
         control.stopMovement();
-	}
-	
-	public void loadState(Score score, Group group) {
-		Connection conn = null;
-		Statement stmt = null;
-		try {
-			Class.forName(DatabaseConstants.JDBC_DRIVER);
-
-			System.out.println("Connecting to database...");
-			conn = DriverManager.getConnection(DatabaseConstants.DB_URL, DatabaseConstants.USER,
-					DatabaseConstants.PASS);
-
-			System.out.println("Connected database successfully...");
-			stmt = conn.createStatement();
-			String sql = "SELECT id, red, green, blue, height, width, pos_x, pos_y FROM SNAKE_BODY_PART ORDER BY id ASC";
-			ResultSet rs = stmt.executeQuery(sql);
-
-			while (rs.next()) {
-				snakeBodyPartsList.add(new Rectangle(rs.getDouble("height"),rs.getDouble("width")));
-				Color color = new Color(rs.getDouble("red"), rs.getDouble("green"), rs.getDouble("blue"), 1);
-				snakeBodyPartsList.getLast().setFill(color);
-				snakeBodyPartsList.getLast().relocate(rs.getDouble("pos_x"), rs.getDouble("pos_y"));
-				group.getChildren().add(snakeBodyPartsList.getLast());
-				if (rs.getInt("id") != 1) { // Don't increase score for the head of the snake
-					score.upScoreValue();
-				}
-				if (frameDelay >= GameConstants.FRAMEDELAY_MAX) {
-		            frameDelay -= GameConstants.DELAY_DECREASE;
-		        }
-			}
-			rs.close();
-		} catch (SQLException se) {
-			// Handle errors for JDBC
-			se.printStackTrace();
-		} catch (Exception e) {
-			// Handle errors for Class.forName
-			e.printStackTrace();
-		} finally {
-			// finally block used to close resources
-			try {
-				if (stmt != null)
-					stmt.close();
-			} catch (SQLException se2) {
-			} // nothing we can do
-			try {
-				if (conn != null)
-					conn.close();
-			} catch (SQLException se) {
-				se.printStackTrace();
-			} // end finally try
-		} // end try
 	}
 }
