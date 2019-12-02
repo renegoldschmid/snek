@@ -6,7 +6,7 @@ import java.sql.Statement;
 
 import javafx.scene.paint.Color;
 
-public class dbOperation {
+public class DbOperation {
 
 	public static void main(String[] args) {
 		

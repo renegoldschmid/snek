@@ -78,30 +78,6 @@ public class SnakeTest {
     }
 
     @Test
-    void testGetframeDelay() {
-    }
-
-    @Test
-    void testRespawn() {
-    }
-
-    @Test
-    void testCollision() {
-    }
-
-    @Test
-    void testGetframeDelay() {
-    }
-
-    @Test
-    void testRespawn() {
-    }
-
-    @Test
-    void testCollision() {
-    }
-
-    @Test
     void testMoveSnake() {
     }
 }

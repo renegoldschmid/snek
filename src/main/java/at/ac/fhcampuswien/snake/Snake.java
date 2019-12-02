@@ -7,7 +7,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import org.apache.log4j.Logger;
 import at.ac.fhcampuswien.database.DatabaseConstants;
-import at.ac.fhcampuswien.database.dbOperation;
+import at.ac.fhcampuswien.database.DbOperation;
 
 import java.awt.*;
 import java.sql.Connection;
@@ -154,7 +154,7 @@ class Snake {
 
 			for (Rectangle bodyPart : snakeBodyPartsList) {
 				Color color = (Color) bodyPart.getFill();
-				dbOperation.insertBodyPart(conn, color, bodyPart.getHeight(), bodyPart.getWidth(),
+				DbOperation.insertBodyPart(conn, color, bodyPart.getHeight(), bodyPart.getWidth(),
 						bodyPart.getLayoutX(), bodyPart.getLayoutY());
 			}
 
