@@ -1,9 +1,10 @@
 package at.ac.fhcampuswien.snake;
 
+import org.apache.log4j.Logger;
+
 import javafx.scene.Group;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
-import org.apache.log4j.Logger;
 
 class Control {
 
@@ -85,10 +86,16 @@ class Control {
                 AudioManager.restartIngamemusic();
                 logger.debug("Game was reset!");
                 break;
+            case P:
+            	// todo save
+				snake.saveState(group, food, score);
+            	break;
+            case L:
+            	snake.reloadSnake(group, food, score, stage, this);
+            	snake.loadState(score, group);
+            	break;
             default:
                 break;
-
-
         }
     }
 }
