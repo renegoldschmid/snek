@@ -1,6 +1,5 @@
 package at.ac.fhcampuswien.snake;
 
-import javafx.geometry.Bounds;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
@@ -9,15 +8,11 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import org.junit.Assert;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.testfx.framework.junit5.ApplicationExtension;
 import org.testfx.framework.junit5.Start;
 
 import java.util.LinkedList;
 
-@ExtendWith(ApplicationExtension.class)
 public class SnakeTest {
 
     private LinkedList<Rectangle> snakeBody; // List of rectangles that form the snake body in the game.
