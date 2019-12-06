@@ -88,7 +88,7 @@ class Control {
                 break;
             case P:
             	// todo save
-				snake.saveState(group, food, score);
+				snake.saveState();
             	break;
             case L:
             	snake.reloadSnake(group, food, score, stage, this);

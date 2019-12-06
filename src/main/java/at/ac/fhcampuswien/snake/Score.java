@@ -18,6 +18,11 @@ class Score {
 
     }
 
+    void setScoreValue(int scoreValue) {
+        this.scoreValue = scoreValue;
+        scoreLabel.setText(GameConstants.MESSAGE_SCORE + scoreValue);
+        logger.debug(String.format("Score set to: %s", scoreValue));
+    }
 
     void scoreRespawn(Group group) {
         scoreValue = GameConstants.INIT_SCORE;
