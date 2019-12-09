@@ -1,8 +1,6 @@
 package at.ac.fhcampuswien.snake;
 
 import java.awt.Point;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.LinkedList;
 
 import org.apache.log4j.Logger;
@@ -123,8 +121,8 @@ class Snake {
         }
     }
 
-	public void saveState(Group group, GameObject food, Score score) {
-		db.truncateTable(DatabaseConstants.SQL_TABLE_SBP);
+	void saveState() {
+		db.truncateTable(DatabaseConstants.SQL_TABLE_SNAKE_BODY_PARTS);
 		for (Rectangle bodyPart : snakeBodyPartsList) {
 			Color color = (Color) bodyPart.getFill();
 			db.insertBodyPart(color, bodyPart.getHeight(), bodyPart.getWidth(), bodyPart.getLayoutX(),
@@ -132,29 +130,19 @@ class Snake {
 		}
 	}
 	
-	public void loadState(Score score, Group group) {
-		ResultSet rs = db.selectBodyParts();
-		try {
-			while (rs.next()) {
-				snakeBodyPartsList.add(new Rectangle(rs.getDouble("height"), rs.getDouble("width")));
-				Color color = new Color(rs.getDouble("red"), rs.getDouble("green"), rs.getDouble("blue"), 1);
-				snakeBodyPartsList.getLast().setFill(color);
-				snakeBodyPartsList.getLast().relocate(rs.getDouble("pos_x"), rs.getDouble("pos_y"));
-				group.getChildren().add(snakeBodyPartsList.getLast());
-				if (rs.getInt("id") != 1) { // Don't increase score for the head of the snake
-					score.upScoreValue();
-				}
-				if (frameDelay >= GameConstants.FRAMEDELAY_MAX) {
-					frameDelay -= GameConstants.DELAY_DECREASE;
-				}
-			}
-			rs.close();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+	void loadState(Score score, Group group) {
+        LinkedList<Rectangle> queriedSnakeBodyPartList;
+
+        queriedSnakeBodyPartList = new LinkedList<>(db.selectBodyParts());
+        group.getChildren().addAll(queriedSnakeBodyPartList);
+        snakeBodyPartsList = new LinkedList<>(queriedSnakeBodyPartList);
+        score.setScoreValue(snakeBodyPartsList.size()-1); //-1 because the head doe not count for a score point
+        if (frameDelay >= GameConstants.FRAMEDELAY_MAX) {
+            frameDelay -= GameConstants.DELAY_DECREASE;
+        }
 	}
 	
-	public void reloadSnake(Group group, GameObject food, Score score, Stage stage, Control control) {
+	void reloadSnake(Group group, GameObject food, Score score, Stage stage, Control control) {
 		group.getChildren().clear();
 		snakeBodyPartsList.clear();
         food.setFood(group, stage);

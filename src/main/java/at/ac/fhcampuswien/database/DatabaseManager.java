@@ -1,79 +1,68 @@
 package at.ac.fhcampuswien.database;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
+import java.util.List;
 
+import at.ac.fhcampuswien.parser.ResultSetToSnake;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
+import org.apache.log4j.Logger;
 
 public class DatabaseManager {
 
 	private static Connection conn;
+	private static Logger logger = Logger.getLogger(DatabaseManager.class.getName());
+	private ResultSetToSnake resultSetToSnakeParser = new ResultSetToSnake();
 
 	public DatabaseManager() {
 		try {
-			Class.forName(DatabaseConstants.JDBC_DRIVER);
 			this.conn = DriverManager.getConnection(DatabaseConstants.DB_URL, DatabaseConstants.USER,
 					DatabaseConstants.PASS);
-		} catch (ClassNotFoundException | SQLException e) {
-			e.printStackTrace();
+
+		} catch ( SQLException e) {
+			logger.error("Could not establish a database connection!");
+			logger.debug(e.getMessage());
 		}
 	}
 
-	public Statement createStatement() {
-		try {
-			return conn.createStatement();
+	public void truncateTable(String table){
+		try (PreparedStatement truncateSnakeBodyParts = conn.prepareStatement(DatabaseConstants.SQL_TRUNCATE_TABLE)) {
+			truncateSnakeBodyParts.executeUpdate();
 		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
-
-	public void truncateTable(String table) {
-		try {
-			Statement stmt = conn.createStatement();
-			stmt.executeUpdate(String.format("TRUNCATE TABLE %s", table));
-			stmt.close();
-		} catch (SQLException e) {
-			e.printStackTrace();
+			logger.error(String.format("Error while truncating Table %s", table));
+			logger.error(e.getMessage());
 		}
 	}
 
-	public void insertBodyPart(Color color, double height, double width, double posX, double posY) {
-		Statement stmt = null;
-		try {
-			stmt = conn.createStatement();
-			String sql = String.format(DatabaseConstants.SQL_INSERT_SBP, color.getRed(), color.getGreen(),
-					color.getBlue(), height, width, posX, posY);
-			stmt.executeUpdate(sql);
-			stmt.close();
+	public void insertBodyPart(Color color, double height, double width, double posX, double posY){
+		try (PreparedStatement insertSnakeBodyParts = conn.prepareStatement(DatabaseConstants.SQL_INSERT_SNAKE_BODY_PARTS)){
+			insertSnakeBodyParts.setDouble(1, color.getRed());
+			insertSnakeBodyParts.setDouble(2, color.getGreen());
+			insertSnakeBodyParts.setDouble(3, color.getBlue());
+			insertSnakeBodyParts.setDouble(4, height);
+			insertSnakeBodyParts.setDouble(5, width);
+			insertSnakeBodyParts.setDouble(6, posX);
+			insertSnakeBodyParts.setDouble(7, posY);
+			insertSnakeBodyParts.executeUpdate();
 		} catch (SQLException se) {
-			se.printStackTrace();
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			try {
-				if (stmt != null) {
-					stmt.close();
-				}
-			} catch (SQLException se2) {
-				// nothing to do
-			}
+			logger.error("Error while inserting into Table SNAKE_BODY_PART");
+			logger.error(String.format("Sql Statement: %s ",DatabaseConstants.SQL_INSERT_SNAKE_BODY_PARTS));
+			logger.error(se.getMessage());
 		}
 	}
 
-	public ResultSet selectBodyParts() {
-		ResultSet rs = null;
-		Statement stmt = null;
-		try {
-			stmt = conn.createStatement();
-			rs = stmt.executeQuery(DatabaseConstants.SQL_SELECT_BODYPARTS);
+	public List<Rectangle> selectBodyParts(){
+		ResultSet snakeBodyPartsResultSet;
+		List<Rectangle> snakeBodyPartList = null;
+		try(PreparedStatement getSnakeBodyParts = conn.prepareStatement(DatabaseConstants.SQL_SELECT_SNAKE_BODY_PARTS)){
+			snakeBodyPartsResultSet = getSnakeBodyParts.executeQuery();
+			snakeBodyPartList = resultSetToSnakeParser.getSnakeBodyPartsFromDatabase(snakeBodyPartsResultSet);
 		} catch (SQLException e) {
-			e.printStackTrace();
+			logger.error("Error while fetching Bodyparts from database.");
+			logger.error(String.format("SQL statement: %s",DatabaseConstants.SQL_SELECT_SNAKE_BODY_PARTS));
+			logger.error(e.getMessage());
 		}
-		return rs;
+		return snakeBodyPartList;
 	}
 	
 	public void close() {
@@ -82,7 +71,8 @@ public class DatabaseManager {
 				conn.close();
 			}
 		} catch (SQLException e) {
-			e.printStackTrace();
+			logger.error(DatabaseConstants.SQL_ERROR_CLOSE);
+			logger.error(e.getMessage());
 		}
 	}
 }

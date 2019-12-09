@@ -7,8 +7,9 @@ module at.ac.fhcampuswien.snake {
 	requires log4j;
 	requires java.sql;
 	requires javafx.graphics;
+    requires com.h2database;
 
-	opens at.ac.fhcampuswien.snake to javafx.fxml;
+    opens at.ac.fhcampuswien.snake to javafx.fxml;
 
 	exports at.ac.fhcampuswien.snake;
 }
