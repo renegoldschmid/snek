@@ -1,21 +1,25 @@
 package at.ac.fhcampuswien.snake;
 
+import java.awt.Point;
+import java.util.LinkedList;
+
+import org.apache.log4j.Logger;
+
+import at.ac.fhcampuswien.database.DatabaseConstants;
+import at.ac.fhcampuswien.database.DatabaseManager;
 import javafx.geometry.Bounds;
 import javafx.scene.Group;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
-import org.apache.log4j.Logger;
-
-import java.awt.*;
-import java.util.LinkedList;
 
 class Snake {
 
-    static Logger logger = Logger.getLogger(Snake.class.getName());
-    private long frameDelay = GameConstants.FRAMEDELAY; //25-30 mill. guter Startwert
-    private LinkedList<Rectangle> snakeBodyPartsList = new LinkedList<>();
+    private static Logger logger = Logger.getLogger(Snake.class.getName());
+    long frameDelay = GameConstants.FRAMEDELAY; //25-30 mill. guter Startwert
+    LinkedList<Rectangle> snakeBodyPartsList = new LinkedList<>();
     private Rectangle head = new Rectangle(GameConstants.SNAKE_WIDTH, GameConstants.SNAKE_HEIGHT); // hier Initialisiert, weil in mehreren Methoden
+    private DatabaseManager db = new DatabaseManager();
 
     Snake(Group group, Stage stage) {
         resetSnake(stage);
@@ -52,14 +56,15 @@ class Snake {
     }
 
 
-    private void eat(Group group, Score score, GameObject food) {
+    void eat(Group group, Score score, GameObject food) {
         snakeBodyPartsList.add(new Rectangle(GameConstants.SNAKE_WIDTH, GameConstants.SNAKE_HEIGHT));//added ein tail rectangle, übernimmt color von food,erhöht score um 1, macht schneller
         snakeBodyPartsList.getLast().setFill(Color.color(food.getColor()[0], food.getColor()[1], food.getColor()[2])); //holt sich aus deathsoundMedia GameObject die Color von Food für sein Tail
         group.getChildren().add(snakeBodyPartsList.getLast()); //bringt den tail auf die Szene
         score.upScoreValue(); // added +1 zu scoreValue
         if (frameDelay >= GameConstants.FRAMEDELAY_MAX) { //maximale Grenze sonst wirds zu schnell
             //von speedRefresh abziehen
-            frameDelay -= GameConstants.DELAY_DECREASE;
+            long delayDecrease = GameConstants.DELAY_DECREASE;
+            frameDelay -= delayDecrease;
             logger.debug(String.format("Framedelay: %s", frameDelay));
         }
     }
@@ -67,22 +72,20 @@ class Snake {
     void collision(GameObject food, Group group, Bounds foodBound, Score score, Control control, Stage stage, Gameboard gameboard) { //gameobject sind obstacles so wie Food, Boundarys für Collisions
         Bounds headBox = head.getBoundsInParent(); // erstellt eine Boundary um den Snakekopf
 
-
         if (headBox.intersects(foodBound)) {//überprüfung Collision Head mit Food Boundary
             eat(group, score, food);
             food.setFood(group, stage);
             AudioManager.playEatsound();
         }
 
-        if (head.getLayoutX() <= 0 || head.getLayoutX() >= stage.getWidth() - 30 || // Überprüfung ob Head den Rand trifft
-                head.getLayoutY() <= 0 || head.getLayoutY() >= stage.getHeight() - 54) {
+        if (snakeBodyPartsList.getFirst().getLayoutX() <= 0 || snakeBodyPartsList.getFirst().getLayoutX() >= stage.getWidth() - 30 || // Überprüfung ob Head den Rand trifft
+        		snakeBodyPartsList.getFirst().getLayoutY() <= 0 || snakeBodyPartsList.getFirst().getLayoutY() >= stage.getHeight() - 54) {
             snakeDead(group, control, stage);
             gameboard.setDeathTouchWall(score, group, stage);
             AudioManager.playDeathsound();
             AudioManager.stopIngamemusic();
             AudioManager.restartGameovermusic();
         }
-
 
         for (int i = 1; i < this.snakeBodyPartsList.size(); i++) { //Überprüfung Snake beisst sich in den oasch
             if (headBox.intersects(this.snakeBodyPartsList.get(i).getBoundsInParent())) {
@@ -117,4 +120,35 @@ class Snake {
             }
         }
     }
+
+	void saveState() {
+		db.truncateTable(DatabaseConstants.SQL_TABLE_SNAKE_BODY_PARTS);
+		for (Rectangle bodyPart : snakeBodyPartsList) {
+			Color color = (Color) bodyPart.getFill();
+			db.insertBodyPart(color, bodyPart.getHeight(), bodyPart.getWidth(), bodyPart.getLayoutX(),
+					bodyPart.getLayoutY());
+		}
+	}
+	
+	void loadState(Score score, Group group) {
+        LinkedList<Rectangle> queriedSnakeBodyPartList;
+
+        queriedSnakeBodyPartList = new LinkedList<>(db.selectBodyParts());
+        group.getChildren().addAll(queriedSnakeBodyPartList);
+        snakeBodyPartsList = new LinkedList<>(queriedSnakeBodyPartList);
+        score.setScoreValue(snakeBodyPartsList.size()-1); //-1 because the head doe not count for a score point
+        if (frameDelay >= GameConstants.FRAMEDELAY_MAX) {
+            frameDelay -= GameConstants.DELAY_DECREASE;
+        }
+	}
+	
+	void reloadSnake(Group group, GameObject food, Score score, Stage stage, Control control) {
+		group.getChildren().clear();
+		snakeBodyPartsList.clear();
+        food.setFood(group, stage);
+        score.scoreRespawn(group);
+        frameDelay = GameConstants.FRAMEDELAY;
+        
+        control.stopMovement();
+	}
 }

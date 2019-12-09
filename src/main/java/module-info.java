@@ -1,11 +1,15 @@
 module at.ac.fhcampuswien.snake {
-    requires javafx.controls;
-    requires javafx.media;
-    requires javafx.fxml;
+	requires javafx.controls;
+	requires javafx.media;
+	requires javafx.fxml;
 	requires java.desktop;
-    requires org.apache.logging.log4j;
-    requires log4j;
+	requires org.apache.logging.log4j;
+	requires log4j;
+	requires java.sql;
+	requires javafx.graphics;
+    requires com.h2database;
 
     opens at.ac.fhcampuswien.snake to javafx.fxml;
-    exports at.ac.fhcampuswien.snake;
+
+	exports at.ac.fhcampuswien.snake;
 }

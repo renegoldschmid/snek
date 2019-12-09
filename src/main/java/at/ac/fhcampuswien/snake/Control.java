@@ -1,16 +1,17 @@
 package at.ac.fhcampuswien.snake;
 
+import org.apache.log4j.Logger;
+
 import javafx.scene.Group;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
-import org.apache.log4j.Logger;
 
-public class Control {
+class Control {
 
-    private boolean goUp;
-    private boolean goDown;
-    private boolean goRight;
-    private boolean goLeft;
+    boolean goUp;
+    boolean goDown;
+    boolean goRight;
+    boolean goLeft;
     private static Logger logger = Logger.getLogger(Control.class.getName());
 
     void stopMovement() {
@@ -48,7 +49,7 @@ public class Control {
                 goDown = false;     //"false" Fälle: dass man sich nicht schräg bewegen kann
                 goRight = false;
                 goLeft = false;
-                logger.debug("Snake is moving down!");
+                logger.debug("Snake is moving up!");
                 break;
 
             case S:
@@ -58,7 +59,7 @@ public class Control {
                 goUp = false;
                 goRight = false;
                 goLeft = false;
-                logger.debug("Snake is moving up!");
+                logger.debug("Snake is moving down!");
                 break;
 
             case D:
@@ -68,7 +69,7 @@ public class Control {
                 goUp = false;
                 goDown = false;
                 goLeft = false;
-                logger.debug("Snake is moving left!");
+                logger.debug("Snake is moving right!");
                 break;
             case A:
                 if (goRight)
@@ -77,7 +78,7 @@ public class Control {
                 goUp = false;
                 goDown = false;
                 goRight = false;
-                logger.debug("Snake is moving right!");
+                logger.debug("Snake is moving left!");
                 break;
             case R:
                 snake.respawn(group, food, score, stage, this);
@@ -85,10 +86,16 @@ public class Control {
                 AudioManager.restartIngamemusic();
                 logger.debug("Game was reset!");
                 break;
+            case P:
+            	// todo save
+				snake.saveState();
+            	break;
+            case L:
+            	snake.reloadSnake(group, food, score, stage, this);
+            	snake.loadState(score, group);
+            	break;
             default:
                 break;
-
-
         }
     }
 }
