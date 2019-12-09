@@ -8,10 +8,10 @@ import javafx.stage.Stage;
 
 class Control {
 
-    private boolean goUp;
-    private boolean goDown;
-    private boolean goRight;
-    private boolean goLeft;
+    boolean goUp;
+    boolean goDown;
+    boolean goRight;
+    boolean goLeft;
     private static Logger logger = Logger.getLogger(Control.class.getName());
 
     void stopMovement() {

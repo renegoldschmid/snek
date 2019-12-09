@@ -32,7 +32,7 @@ class Score {
         logger.debug(String.format("Score increased: %s", scoreValue));
     }
 
-    int getScoreLabel() {
+    int getScoreValue() {
         return scoreValue;
     }
 }

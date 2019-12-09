@@ -1,26 +1,22 @@
 package at.ac.fhcampuswien.snake;
 
-import javafx.geometry.Bounds;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
+import org.apache.log4j.PropertyConfigurator;
 import org.junit.Assert;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.testfx.framework.junit5.ApplicationExtension;
 import org.testfx.framework.junit5.Start;
 
-import java.util.LinkedList;
 
 @ExtendWith(ApplicationExtension.class)
 public class SnakeTest {
 
-    private LinkedList<Rectangle> snakeBody; // List of rectangles that form the snake body in the game.
     private Group group;
     private Stage stage;
     private GameObject food;
@@ -29,12 +25,14 @@ public class SnakeTest {
     private Pane backgroundPane = new Pane();
     private Snake snake;
     private Gameboard gameboard;
+    private ApplicationInteractions applicationInteractions;
 
     @Start
     public void start(Stage stage) {
+        PropertyConfigurator.configure("./src/main/resources/at/ac/fhcampuswien/configurations/test/log4jTests.properties");
         group = new Group();
-        stage.setWidth(1500);
-        stage.setHeight(700);
+        stage.setWidth(GameConstants.STAGE_WIDTH);
+        stage.setHeight(GameConstants.STAGE_HEIGHT);
         this.stage = stage;
         food = new GameObject();
         score = new Score(group);
@@ -46,38 +44,166 @@ public class SnakeTest {
         backgroundPane.setBackground(backgroundView);
         Scene scene = new Scene(backgroundPane, stage.getWidth(), stage.getHeight(), Color.DARKGREEN);
         snake = new Snake(group, stage);
-        scene.setOnKeyPressed(keyEvent -> {
-            control.keyHandler(keyEvent, snake, group, food, score, stage);//control nimmt Keyevent und schaut speziell nach WASD
-        });
+        scene.setOnKeyPressed(keyEvent -> control.keyHandler(keyEvent, snake, group, food, score, stage));
         gameboard = new Gameboard();
-        snakeBody = new LinkedList<>();
+        applicationInteractions = new ApplicationInteractions(group,stage);
+
     }
 
     @Test
-    void snake_respawn() {
-        snake.respawn(group, food, score, stage, control);
+    void testSnake_Initial() {
+        Assert.assertEquals(1, snake.snakeBodyPartsList.size());
+        Assert.assertEquals(0,score.getScoreValue());
+        Assert.assertEquals(Color.color(food.getColor()[0], food.getColor()[1], food.getColor()[2]), snake.snakeBodyPartsList.getLast().getFill());
     }
 
     @Test
-    void snake_collision() {
+    void testSnakeEat_ateOne(){
+        food.setFood(group, stage);
+        snake.eat(group,score,food);
+        Assert.assertEquals(2, snake.snakeBodyPartsList.size());
+        Assert.assertEquals(1,score.getScoreValue());
+        Assert.assertEquals(Color.color(food.getColor()[0],food.getColor()[1],food.getColor()[2]),snake.snakeBodyPartsList.getLast().getFill());
+    }
+
+    @Test
+    void testSnakeEat_ateTwo(){
+        food.setFood(group, stage);
+        snake.eat(group,score,food);
+        food.setFood(group, stage);
+        snake.eat(group,score,food);
+        Assert.assertEquals(3, snake.snakeBodyPartsList.size());
+        Assert.assertEquals(2,score.getScoreValue());
+        Assert.assertEquals(Color.color(food.getColor()[0],food.getColor()[1],food.getColor()[2]),snake.snakeBodyPartsList.getLast().getFill());
+    }
+
+    @Test
+    void testSnakeEat_ateThree(){
+        food.setFood(group, stage);
+        snake.eat(group,score,food);
+        food.setFood(group, stage);
+        snake.eat(group,score,food);
+        food.setFood(group, stage);
+        snake.eat(group,score,food);
+        Assert.assertEquals(4, snake.snakeBodyPartsList.size());
+        Assert.assertEquals(3,score.getScoreValue());
+        Assert.assertEquals(Color.color(food.getColor()[0],food.getColor()[1],food.getColor()[2]),snake.snakeBodyPartsList.getLast().getFill());
+    }
+
+    @Test
+    void testSnakeEat_ateSevenTeen(){
+        for (int eatCount = 0; eatCount < 17; eatCount++) {
+            food.setFood(group, stage);
+            snake.eat(group,score,food);
+        }
+        Assert.assertEquals(18, snake.snakeBodyPartsList.size());
+        Assert.assertEquals(17,score.getScoreValue());
+        Assert.assertEquals(Color.color(food.getColor()[0],food.getColor()[1],food.getColor()[2]),snake.snakeBodyPartsList.getLast().getFill());
+    }
+
+    @Test
+    void testSnakeRespawn_Death(){
+        control.goLeft = true;
+        applicationInteractions.intervalMoveSnake(snake, food, score, control, gameboard,GameConstants.SPEED);
+        applicationInteractions.intervalMoveSnake(snake, food, score, control, gameboard,GameConstants.SPEED);
+        applicationInteractions.intervalMoveSnake(snake, food, score, control, gameboard,GameConstants.SPEED);
+        control.goUp = true;
+        control.goLeft = false;
+        applicationInteractions.intervalMoveSnake(snake, food, score, control, gameboard,GameConstants.SPEED);
+        snake.respawn(group,food,score,stage,control);
+        Assert.assertEquals(GameConstants.STAGE_HEIGHT / 2,snake.snakeBodyPartsList.getFirst().getLayoutY(),0);
+        Assert.assertEquals(GameConstants.STAGE_WIDTH / 2,snake.snakeBodyPartsList.getFirst().getLayoutX(),0);
+        Assert.assertEquals(GameConstants.FRAMEDELAY,snake.frameDelay); // zurück zum Standardwert
+        Assert.assertFalse(control.goDown);
+        Assert.assertFalse(control.goUp);
+        Assert.assertFalse(control.goRight);
+        Assert.assertFalse(control.goLeft);
+        Assert.assertEquals(1,snake.snakeBodyPartsList.size());
+    }
+
+    @Test
+    void testWall_Death(){
+        control.goUp = true;
+        for (int snakeMovementSteps = 0; snakeMovementSteps <= GameConstants.STAGE_HEIGHT / 2 / GameConstants.SPEED; snakeMovementSteps++) {
+            applicationInteractions.intervalMoveSnake(snake, food, score, control, gameboard,GameConstants.SPEED);
+        }
+        food.setFood(group, stage);
+        snake.eat(group,score,food);
         snake.collision(food, group, food.getBound(), score, control, stage, gameboard);
+        Assert.assertEquals(GameConstants.STAGE_HEIGHT / 2,snake.snakeBodyPartsList.getFirst().getLayoutY(),0);
+        Assert.assertEquals(GameConstants.STAGE_WIDTH / 2,snake.snakeBodyPartsList.getFirst().getLayoutX(),0);
+        Assert.assertEquals(GameConstants.FRAMEDELAY,snake.frameDelay); // zurück zum Standardwert
+        Assert.assertFalse(control.goDown);
+        Assert.assertFalse(control.goUp);
+        Assert.assertFalse(control.goRight);
+        Assert.assertFalse(control.goLeft);
+        Assert.assertEquals(1,snake.snakeBodyPartsList.size());
+    }
+
+
+    @Test
+    void testTail_Death(){
+        for (int eatCount = 0; eatCount < 5; eatCount++) {
+            food.setFood(group, stage);
+            snake.eat(group,score,food);
+        }
+        control.goLeft = true;
+        applicationInteractions.intervalMoveSnake(snake, food, score, control, gameboard,GameConstants.SPEED);
+        control.goRight = true;
+        control.goLeft = false;
+        applicationInteractions.intervalMoveSnake(snake, food, score, control, gameboard,GameConstants.SPEED);
+
+        snake.collision(food, group, food.getBound(), score, control, stage, gameboard);
+        Assert.assertEquals(GameConstants.STAGE_HEIGHT / 2,snake.snakeBodyPartsList.getFirst().getLayoutY(),0);
+        Assert.assertEquals(GameConstants.STAGE_WIDTH / 2,snake.snakeBodyPartsList.getFirst().getLayoutX(),0);
+        Assert.assertEquals(GameConstants.FRAMEDELAY,snake.frameDelay); // zurück zum Standardwert
+        Assert.assertFalse(control.goDown);
+        Assert.assertFalse(control.goUp);
+        Assert.assertFalse(control.goRight);
+        Assert.assertFalse(control.goLeft);
+        Assert.assertEquals(1,snake.snakeBodyPartsList.size());
+
     }
 
     @Test
-    void snake_eat() {
-        snake_ate();
-        Assert.assertEquals(1, snakeBody.size());
-        Assert.assertEquals(Color.color(food.getColor()[0], food.getColor()[1], food.getColor()[2]), snakeBody.getLast().getFill());
-    }
-
-    void snake_ate() {
-        snakeBody.add(new Rectangle(20, 20));
-        snakeBody.getLast().setFill(Color.color(food.getColor()[0], food.getColor()[1], food.getColor()[2])); //holt sich aus deathsoundMedia GameObject die Color von Food für sein Tail
-        group.getChildren().add(snakeBody.getLast()); //bringt den tail auf die Szene
-        score.upScoreValue(); // added +1 zu scoreValue
+    void testMoveSnakeUp_Movement(){
+        control.goUp = true;
+        double xBeforeMove = snake.snakeBodyPartsList.getFirst().getLayoutX();
+        double yBeforeMove = snake.snakeBodyPartsList.getFirst().getLayoutY();
+        applicationInteractions.intervalMoveSnake(snake, food, score, control, gameboard,GameConstants.SPEED);
+        Assert.assertEquals(xBeforeMove,snake.snakeBodyPartsList.getFirst().getLayoutX(),0);
+        Assert.assertEquals(yBeforeMove-GameConstants.SPEED,snake.snakeBodyPartsList.getFirst().getLayoutY(),0);
     }
 
     @Test
-    void testMoveSnake() {
+    void testMoveSnakeDown_Movement(){
+        control.goDown = true;
+        double xBeforeMove = snake.snakeBodyPartsList.getFirst().getLayoutX();
+        double yBeforeMove = snake.snakeBodyPartsList.getFirst().getLayoutY();
+        applicationInteractions.intervalMoveSnake(snake, food, score, control, gameboard,GameConstants.SPEED);
+        Assert.assertEquals(xBeforeMove,snake.snakeBodyPartsList.getFirst().getLayoutX(),0);
+        Assert.assertEquals(yBeforeMove+GameConstants.SPEED,snake.snakeBodyPartsList.getFirst().getLayoutY(),0);
     }
+
+    @Test
+    void testMoveSnakeRight_Movement(){
+        control.goRight = true;
+        double xBeforeMove = snake.snakeBodyPartsList.getFirst().getLayoutX();
+        double yBeforeMove = snake.snakeBodyPartsList.getFirst().getLayoutY();
+        applicationInteractions.intervalMoveSnake(snake, food, score, control, gameboard,GameConstants.SPEED);
+        Assert.assertEquals(xBeforeMove+GameConstants.SPEED,snake.snakeBodyPartsList.getFirst().getLayoutX(),0);
+        Assert.assertEquals(yBeforeMove,snake.snakeBodyPartsList.getFirst().getLayoutY(),0);
+    }
+
+    @Test
+    void testMoveSnakeLeft_Movement(){
+        control.goLeft = true;
+        double xBeforeMove = snake.snakeBodyPartsList.getFirst().getLayoutX();
+        double yBeforeMove = snake.snakeBodyPartsList.getFirst().getLayoutY();
+        applicationInteractions.intervalMoveSnake(snake, food, score, control, gameboard,GameConstants.SPEED);
+        Assert.assertEquals(xBeforeMove-GameConstants.SPEED,snake.snakeBodyPartsList.getFirst().getLayoutX(),0);
+        Assert.assertEquals(yBeforeMove,snake.snakeBodyPartsList.getFirst().getLayoutY(),0);
+    }
+
+
 }
